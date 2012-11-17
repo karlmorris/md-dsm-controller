@@ -1,5 +1,6 @@
 package idsml.model;
 
+import idsml.dsc.DSC;
 import idsml.procedure.Procedure;
 
 import java.util.ArrayList;
@@ -39,6 +40,22 @@ public class Model {
 			dependencies.add(dependency);
 			procedures.put(node, dependencies);
 		}
+	}
+	
+	
+	public Procedure getProcedure(DSC dsc){
+		// A model can only have a single procedure of a given DSC, therefore 1 to 1.
+		Iterator<String> keyIterator = procedures.keySet().iterator();
+		while (keyIterator.hasNext()){
+			String currentKey = keyIterator.next();
+			for (int i = 0; i < procedures.get(currentKey).size(); i++){
+				if (procedures.get(currentKey).get(i).getClassifier().getName().equals(dsc.getName()))
+						return procedures.get(currentKey).get(i);
+			}
+		}
+		
+		return null;
+		
 	}
 	
 	public Map<String, ArrayList<Procedure>> getAllDependencies(){
