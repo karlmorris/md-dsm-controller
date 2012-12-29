@@ -20,6 +20,8 @@ public class Executor {
 	ArrayList<ExecutionUnit> executionUnits = null;
 	
 	ExpressionEvaluator expression = new ExpressionEvaluator();
+	ScriptEvaluator script = new ScriptEvaluator();
+	
 	String statement = "";
 	
 	public void executeModel(Model model){
@@ -40,10 +42,14 @@ public class Executor {
 		}
 	}
 	
-	private void executeStatement (String statement) throws InvocationTargetException, CompileException{
+	public void executeStatement (String statement) throws InvocationTargetException, CompileException{
 		this.statement = statement;
-		expression.cook(statement);
-		expression.evaluate(null);
+		//expression.cook(statement);
+		//expression.evaluate(null);
+		script.setReturnType(String.class);
+		script.cook(statement);
+		String result = (String) script.evaluate(null);
+		System.out.println("Result: " + result);
 	}
 	
 	public String getLastStatement(){

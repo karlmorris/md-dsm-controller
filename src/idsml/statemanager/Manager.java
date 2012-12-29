@@ -11,9 +11,10 @@ import java.util.HashMap;
  */
 
 public class Manager {
-	private HashMap<String, Attribute> attributes;
 	
-	private Manager manager = null;
+	private HashMap<String, Attribute> attributes = new HashMap<String, Attribute>();
+	
+	private static Manager manager;
 	
 	public void putAttribute(Attribute attribute){
 		putAttribute(attribute.getName(), attribute);
@@ -29,7 +30,7 @@ public class Manager {
 	
 	private Manager() {};
 	
-	public Manager getInstance(){
+	public static synchronized Manager getInstance(){
 		if (manager == null)
 			manager = new Manager();
 		return manager;

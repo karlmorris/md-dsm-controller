@@ -21,7 +21,6 @@ public class Repository {
 		return null;
 	}
 	
-	
 	static public ArrayList<Procedure> getProceduresWithDSC(DSC dsc){
 		
 		ArrayList<Procedure> matchingProcedures = new ArrayList<Procedure>();
