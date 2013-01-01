@@ -42,14 +42,23 @@ public class Executor {
 		}
 	}
 	
-	public void executeStatement (String statement) throws InvocationTargetException, CompileException{
+	public Call executeStatement (String statement) throws InvocationTargetException, CompileException{
 		this.statement = statement;
 		//expression.cook(statement);
 		//expression.evaluate(null);
-		script.setReturnType(String.class);
+		script.setReturnType(Call.class);
 		script.cook(statement);
-		String result = (String) script.evaluate(null);
-		System.out.println("Result: " + result);
+		Call result = (Call) script.evaluate(null);
+		
+		
+		if (result instanceof DSCCall){
+			System.out.println("DSC to call: " + ((DSCCall)result).getDSC().getName());
+		} else if (result instanceof EUCall){
+			System.out.println("EU to call: " + ((EUCall)result).getEUId());
+		} else if (result instanceof EventWaitCall){
+			System.out.println("Will register: " + ((EventWaitCall)result).getEUId() + " in response to " + ((EventWaitCall)result).getEvent());
+		}
+		return result;
 	}
 	
 	public String getLastStatement(){
@@ -57,7 +66,7 @@ public class Executor {
 	}
 	
 	private ArrayList<ExecutionUnit> getExecutionUnits(Procedure procedure){
-		String server = "textr.us", db = "fiu_test", user = "fiu_test", password = "fiu_test";	
+		String server = "textr.us", db = "fiu_test", user = "fiu_test", password = "fiu_test";
 		Connector connector = new MySQLConnector();
 		
 		connector.connect(user, password, server, db);
