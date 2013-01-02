@@ -52,6 +52,9 @@ public class Model {
 	
 	
 	public Procedure getProcedure(DSC dsc){
+		//First check if the initial procedure is a match
+		if (this.init.getClassifier().equals(dsc))
+			return this.init;
 		// A model can only have a single procedure of a given DSC, therefore 1 to 1.
 		Iterator<String> keyIterator = procedures.keySet().iterator();
 		while (keyIterator.hasNext()){

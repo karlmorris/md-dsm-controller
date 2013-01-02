@@ -3,7 +3,6 @@ package idsml.generator;
 import idsml.dsc.DSC;
 import idsml.dsc.Type;
 import idsml.model.Model;
-import idsml.procedure.ExecutionUnit;
 import idsml.procedure.Procedure;
 import idsml.repository.Repository;
 import idsml.selector.NaiveSelector;

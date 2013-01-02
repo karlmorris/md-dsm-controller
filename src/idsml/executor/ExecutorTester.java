@@ -20,7 +20,7 @@ public class ExecutorTester {
 		
 		
 		Executor executor = new Executor();
-		
+		String boilerplateInclude = "import idsml.executor.call.*; import idsml.executor.*; import idsml.dsc.*; import idsml.statemanager.*;import idsml.repository.*;import idsml.model.*;";
 		/*
 		String command = "import idsml.executor.*; import idsml.dsc.*; import idsml.statemanager.*;import idsml.repository.*;import idsml.model.*;" +
 				"System.out.println(5 + 5);" +
@@ -72,27 +72,40 @@ public class ExecutorTester {
 				//Procedure procedure6 = new Procedure("0006", "Encrypt3", secondDSC, new ExecutionUnit("send0001", ""), dependencies2);
 				
 				
-				String command = "import idsml.executor.*; import idsml.dsc.*; import idsml.statemanager.*;import idsml.repository.*;import idsml.model.*;" +
+				String command = boilerplateInclude +
 						"System.out.println(5 + 5);" +
 						"idsml.statemanager.StateManager stateManager = idsml.statemanager.StateManager.getInstance();" +
 						"Attribute att = new Attribute(\"testAttribute\", (Object)\"This string is being stored as the value of the attribute\");" +
 						"System.out.println(\"Value set in state manager\");" +
 						"stateManager.putAttribute(att);" +
 						"DSC secondDSC = new DSC(\"Second\", Type.OPER);" +
-						"return new DSCCall(secondDSC, null);";
+						"return new DSCCall(secondDSC, \"finalEU\");";
+				
+				String finalCommand = boilerplateInclude +
+						"System.out.println(20 + 20);" +
+						"idsml.statemanager.StateManager stateManager = idsml.statemanager.StateManager.getInstance();" +
+						"Attribute att = new Attribute(\"testAttribute\", (Object)\"This string is being stored as the value of the attribute\");" +
+						"System.out.println(\"Value set in state manager\");" +
+						"if (stateManager.hasAttribute(\"testAttribute\"))" +
+						"System.out.println(\"Failure: Value not cleared\");" +
+						" else " +
+						"System.out.println(\"Sucess: Value cleared\");" +
+						"return null;";
 				
 				ExecutionUnit start = new ExecutionUnit("start", command);
+				ExecutionUnit finalEU = new ExecutionUnit("finalEU", finalCommand);
 				
 				procedure1.setStartEU(start);
+				procedure1.addExecutionUnit(finalEU);
 				
 				
-				String secondCommand = "import idsml.executor.*; import idsml.statemanager.*;import idsml.repository.*; import idsml.model.*; import idsml.dsc.*;" +
+				String secondCommand = boilerplateInclude +
 						"System.out.println(10 + 10);" +
 						"idsml.statemanager.StateManager stateManager = idsml.statemanager.StateManager.getInstance();" +
 						"System.out.println((String)stateManager.getAttribute(\"testAttribute\").getValue());" +
 						"return new EUCall(\"third\");";
 				
-				String thirdCommand = "import idsml.executor.*; import idsml.statemanager.*;import idsml.repository.*; import idsml.model.*; import idsml.dsc.*;" +
+				String thirdCommand = boilerplateInclude +
 						"System.out.println(20 + 10);" +
 						"idsml.statemanager.StateManager stateManager = idsml.statemanager.StateManager.getInstance();" +
 						"System.out.println(\"Clearing state information\");" +

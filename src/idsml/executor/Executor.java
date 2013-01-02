@@ -1,6 +1,9 @@
 package idsml.executor;
 import idsml.dsc.DSC;
-import idsml.event.Register;
+import idsml.executor.call.Call;
+import idsml.executor.call.DSCCall;
+import idsml.executor.call.EUCall;
+import idsml.executor.call.EventWaitCall;
 import idsml.model.Model;
 import idsml.procedure.ExecutionUnit;
 import idsml.procedure.Procedure;
@@ -19,7 +22,7 @@ import org.codehaus.janino.*;
 
 public class Executor {
 	
-	Model currentModel;
+	Model model;
 	Procedure currentProcedure;
 	ArrayList<ExecutionUnit> executionUnits = null;
 	
@@ -33,9 +36,9 @@ public class Executor {
 		id = UUID.randomUUID();
 	}
 	
-	public void executeModel(Model model) throws CompileException, InvocationTargetException{
+	public void executeModel(Model intentModel) throws CompileException, InvocationTargetException{
 		
-		currentModel = model;
+		this.model = intentModel;
 		
 		
 		
@@ -63,18 +66,37 @@ public class Executor {
 		 * TODO: Each model should have an event listener for the ID of the executing model, where the value is the DSC being executed
 		 */
 
-		while ((result != null) && (stateManager.hasAttribute(id.toString()))){
+		while (((result != null) || init.getId() != currentProcedure.getId()) && (stateManager.hasAttribute(id.toString()))){
 			if (result instanceof DSCCall){
 				System.out.println("DSC to call: " + ((DSCCall)result).getDSC().getName());
-				currentProcedure = currentModel.getProcedure(((DSCCall)result).getDSC());
-				Register.registerEventListener(currentModel.getId(), currentProcedure.getClassifier().getName());
+				ArrayList<CallBack> callBacks;
+				if (stateManager.hasAttribute(model.getId()))
+					callBacks = (ArrayList<CallBack>) stateManager.getAttribute(model.getId()).getValue();
+				else
+					callBacks = new ArrayList<CallBack>();
+				callBacks.add(new CallBack(currentProcedure.getClassifier(), ((DSCCall)result).getDSC(), ((DSCCall)result).getEUId()));
+				stateManager.putAttribute(new Attribute(model.getId(), callBacks));
+				currentProcedure = model.getProcedure(((DSCCall)result).getDSC());
 				result = executeStatement(currentProcedure.getStartEU().getBody());
 			} else if (result instanceof EUCall){
 				System.out.println("EU to call: " + ((EUCall)result).getEUId());
 				result = executeStatement(currentProcedure.getExecutionUnit(((EUCall)result).getEUId()).getBody());
 			} else if (result instanceof EventWaitCall){
 				System.out.println("Will register: " + ((EventWaitCall)result).getEUId() + " in response to " + ((EventWaitCall)result).getEvent());
+			} else {
+				
+				ArrayList<CallBack> currentCallbacks = ((ArrayList<CallBack>)stateManager.getAttribute(model.getId()).getValue());
+				for (int i = 0; i < currentCallbacks.size(); i++){
+					CallBack callback = currentCallbacks.get(i);
+					if (callback.getCalledProcedureDSC().equals(currentProcedure.getClassifier())){
+						currentCallbacks.remove(i);
+						currentProcedure = model.getProcedure(callback.callingProcedureDSC);
+						result = executeStatement(model.getProcedure(callback.getCallingProcedureDSC()).getExecutionUnit(callback.getEUId()).getBody());
+					}
+				}
+				
 			}
+
 		}
 	}
 	
@@ -115,4 +137,40 @@ public class Executor {
 		
 	}
 
+}
+
+class CallBack{
+	String eUId;
+	DSC callingProcedureDSC, calledProcedureDSC;
+	
+	public CallBack(DSC callingdsc, DSC calleddsc, String eUId){
+		this.callingProcedureDSC = callingdsc;
+		this.calledProcedureDSC = calleddsc;
+		this.eUId = eUId;
+	}
+
+	public String getEUId() {
+		return eUId;
+	}
+
+	public void setEUId(String eUId) {
+		this.eUId = eUId;
+	}
+
+	public DSC getCallingProcedureDSC() {
+		return callingProcedureDSC;
+	}
+
+	public void setCallingProcedureDSC(DSC procedureDSC) {
+		this.callingProcedureDSC = procedureDSC;
+	}
+
+	public DSC getCalledProcedureDSC() {
+		return calledProcedureDSC;
+	}
+
+	public void setCalledProcedureDSC(DSC calledProcedureDSC) {
+		this.calledProcedureDSC = calledProcedureDSC;
+	}
+	
 }

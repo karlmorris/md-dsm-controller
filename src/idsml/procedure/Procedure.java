@@ -61,6 +61,10 @@ public class Procedure {
 		this.dependency = dependency;
 	}
 	
+	public void addExecutionUnit(ExecutionUnit executionUnit){
+		addExecutionUnit(executionUnit.id, executionUnit);
+	}
+	
 	public void addExecutionUnit(String id, ExecutionUnit executionUnit){
 		executionUnits.put(id, executionUnit);
 	}
