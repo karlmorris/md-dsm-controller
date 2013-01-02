@@ -55,7 +55,7 @@ public class MySQLConnector implements Connector {
 			rs = st.executeQuery("SELECT id, name, initial_execution_unit_id from procedures where classifier_id = '" + dsc_id + "'");
 			
 			while (rs.next())
-				procedures.add(new Procedure(rs.getString(1), rs.getString(2), dsc, new ExecutionUnit(rs.getString(3), "")));
+				procedures.add(new Procedure(rs.getString(1), rs.getString(2), dsc));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

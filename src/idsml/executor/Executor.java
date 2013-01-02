@@ -6,9 +6,12 @@ import idsml.procedure.ExecutionUnit;
 import idsml.procedure.Procedure;
 import idsml.repository.connector.Connector;
 import idsml.repository.connector.MySQLConnector;
+import idsml.statemanager.Attribute;
+import idsml.statemanager.StateManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.codehaus.commons.compiler.CompileException;
 import org.codehaus.janino.*;
@@ -20,9 +23,18 @@ public class Executor {
 	Procedure currentProcedure;
 	ArrayList<ExecutionUnit> executionUnits = null;
 	
+	StateManager stateManager = StateManager.getInstance();
+	
 	String statement = "";
 	
+	UUID id;
+	
+	public Executor(){
+		id = UUID.randomUUID();
+	}
+	
 	public void executeModel(Model model) throws CompileException, InvocationTargetException{
+		
 		currentModel = model;
 		
 		
@@ -30,9 +42,13 @@ public class Executor {
 		Procedure init = model.getInit();
 		Procedure currentProcedure = init;
 		
-		executionUnits = getExecutionUnits(init);
+		stateManager.putAttribute(new Attribute(id.toString(), init));
 		
-		ExecutionUnit startEU = executionUnits.get(0); // Grab initial EU. Change to Map and init.getStartEU()
+		//executionUnits = getExecutionUnits(init);
+		
+		//ExecutionUnit startEU = executionUnits.get(0); // Grab initial EU. Change to Map and init.getStartEU()
+		
+		ExecutionUnit startEU = init.getStartEU();
 		
 		Call result = null;
 		try {
@@ -47,15 +63,15 @@ public class Executor {
 		 * TODO: Each model should have an event listener for the ID of the executing model, where the value is the DSC being executed
 		 */
 
-		while ((result != null) || (Register.hasEventListenerRegistered(currentModel.getId()))){
+		while ((result != null) && (stateManager.hasAttribute(id.toString()))){
 			if (result instanceof DSCCall){
 				System.out.println("DSC to call: " + ((DSCCall)result).getDSC().getName());
 				currentProcedure = currentModel.getProcedure(((DSCCall)result).getDSC());
 				Register.registerEventListener(currentModel.getId(), currentProcedure.getClassifier().getName());
-				executeStatement(currentProcedure.getStartEU().getBody());
+				result = executeStatement(currentProcedure.getStartEU().getBody());
 			} else if (result instanceof EUCall){
 				System.out.println("EU to call: " + ((EUCall)result).getEUId());
-				executeStatement(currentProcedure.getExecutionUnit(((EUCall)result).getEUId()).getBody());
+				result = executeStatement(currentProcedure.getExecutionUnit(((EUCall)result).getEUId()).getBody());
 			} else if (result instanceof EventWaitCall){
 				System.out.println("Will register: " + ((EventWaitCall)result).getEUId() + " in response to " + ((EventWaitCall)result).getEvent());
 			}

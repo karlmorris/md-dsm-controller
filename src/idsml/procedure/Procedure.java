@@ -14,22 +14,19 @@ public class Procedure {
 	Map<String, ExecutionUnit> executionUnits = new HashMap<String, ExecutionUnit>();
 	ArrayList<DSC> dependency = new ArrayList<DSC>();
 	
-	public Procedure(String id, String name, DSC classifier, ExecutionUnit startEU,
-			ArrayList<DSC> dependency) {
+	public Procedure(String id, String name, DSC classifier) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.classifier = classifier;
-		this.startEU = startEU;
-		this.dependency = dependency;
 	}
 	
-	public Procedure(String id, String name, DSC classifier, ExecutionUnit startEU) {
+	public Procedure(String id, String name, DSC classifier, ArrayList<DSC> dependency) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.classifier = classifier;
-		this.startEU = startEU;
+		this.dependency = dependency;
 	}
 	
 	public String getId() {
@@ -59,11 +56,16 @@ public class Procedure {
 	public ArrayList<DSC> getDependency() {
 		return dependency;
 	}
+	
 	public void setDependency(ArrayList<DSC> dependency) {
 		this.dependency = dependency;
 	}
 	
-	public void setExecutionUnits(Map<String, ExecutionUnit> executionUnits){
+	public void addExecutionUnit(String id, ExecutionUnit executionUnit){
+		executionUnits.put(id, executionUnit);
+	}
+	
+	public void addExecutionUnits(Map<String, ExecutionUnit> executionUnits){
 		this.executionUnits = executionUnits;
 	}
 	
