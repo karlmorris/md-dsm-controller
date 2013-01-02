@@ -28,9 +28,7 @@ public class ExecutorTester {
 				"System.out.println(10 + 10);" +
 				"idsml.statemanager.Manager stateManager = idsml.statemanager.Manager.getInstance();" +
 				"System.out.println((String)stateManager.getAttribute(\"testAttribute\").getValue());" +
-				"return new DSCCall(new DSC(\"dummyDSC\", Type.OPER));";
-		
-		executor = new Executor();
+				"return new DSCCall(new DSC(\"dummyDSC\", Type.OPER), \"EUIdToExecuteOnReturn\");";
 		try {
 			executor.executeStatement(command);
 		} catch (CompileException e) {

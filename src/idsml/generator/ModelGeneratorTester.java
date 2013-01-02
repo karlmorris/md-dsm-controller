@@ -3,6 +3,7 @@ package idsml.generator;
 import idsml.dsc.DSC;
 import idsml.dsc.Type;
 import idsml.model.Model;
+import idsml.procedure.ExecutionUnit;
 import idsml.procedure.Procedure;
 import idsml.repository.Repository;
 import idsml.selector.NaiveSelector;
@@ -29,16 +30,16 @@ public static void main(String[] args) {
 		ArrayList<DSC> dependencies3 = new ArrayList<DSC>();	
 		dependencies3.add(compressDSC);
 		
-		Procedure procedure1 = new Procedure("0001", "SendBasic1", sendDSC, "send0001", dependencies1);
-		Procedure procedure2 = new Procedure("0002", "SendBasic2", sendDSC, "send0001", dependencies1);
-		Procedure procedure3 = new Procedure("0003", "SendBasic3", sendDSC, "send0001", dependencies1);
-		Procedure procedure4 = new Procedure("0004", "Encrypt1", encryptDSC, "send0001", dependencies2);
-		Procedure procedure5 = new Procedure("0005", "Encrypt2", encryptDSC, "send0001", dependencies2);
-		Procedure procedure6 = new Procedure("0006", "Encrypt3", encryptDSC, "send0001", dependencies2);
-		Procedure procedure7 = new Procedure("0007", "Dummy1", dummyDSC, "send0001", dependencies3);
-		Procedure procedure8 = new Procedure("0008", "Dummy2", dummyDSC, "send0001", dependencies3);
-		Procedure procedure9 = new Procedure("0009", "Compress1", compressDSC, "send0001");
-		Procedure procedure0 = new Procedure("0000", "Compress2", compressDSC, "send0001");
+		Procedure procedure1 = new Procedure("0001", "SendBasic1", sendDSC, new ExecutionUnit("send0001", ""), dependencies1);
+		Procedure procedure2 = new Procedure("0002", "SendBasic2", sendDSC, new ExecutionUnit("send0001", ""), dependencies1);
+		Procedure procedure3 = new Procedure("0003", "SendBasic3", sendDSC, new ExecutionUnit("send0001", ""), dependencies1);
+		Procedure procedure4 = new Procedure("0004", "Encrypt1", encryptDSC, new ExecutionUnit("send0001", ""), dependencies2);
+		Procedure procedure5 = new Procedure("0005", "Encrypt2", encryptDSC, new ExecutionUnit("send0001", ""), dependencies2);
+		Procedure procedure6 = new Procedure("0006", "Encrypt3", encryptDSC, new ExecutionUnit("send0001", ""), dependencies2);
+		Procedure procedure7 = new Procedure("0007", "Dummy1", dummyDSC, new ExecutionUnit("send0001", ""), dependencies3);
+		Procedure procedure8 = new Procedure("0008", "Dummy2", dummyDSC, new ExecutionUnit("send0001", ""), dependencies3);
+		Procedure procedure9 = new Procedure("0009", "Compress1", compressDSC, new ExecutionUnit("send0001", ""));
+		Procedure procedure0 = new Procedure("0000", "Compress2", compressDSC, new ExecutionUnit("send0001", ""));
 		
 		
 		Repository.addProcedure(procedure1);
@@ -53,7 +54,7 @@ public static void main(String[] args) {
 		Repository.addProcedure(procedure0);
 		
 		for (int i = 0; i < 90; i++){
-			Procedure procedure = new Procedure(String.valueOf(i), "Compress2", new DSC("Test", Type.OPER), "send0001");
+			Procedure procedure = new Procedure(String.valueOf(i), "Compress2", new DSC("Test", Type.OPER), new ExecutionUnit("send0001", ""));
 			Repository.addProcedure(procedure);
 		}
 		

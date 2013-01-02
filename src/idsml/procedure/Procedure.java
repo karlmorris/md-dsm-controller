@@ -3,15 +3,18 @@ package idsml.procedure;
 import idsml.dsc.DSC;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Procedure {
 	String id;
 	String name;
 	DSC classifier;
-	String startEU;
+	ExecutionUnit startEU;
+	Map<String, ExecutionUnit> executionUnits = new HashMap<String, ExecutionUnit>();
 	ArrayList<DSC> dependency = new ArrayList<DSC>();
 	
-	public Procedure(String id, String name, DSC classifier, String startEU,
+	public Procedure(String id, String name, DSC classifier, ExecutionUnit startEU,
 			ArrayList<DSC> dependency) {
 		super();
 		this.id = id;
@@ -21,7 +24,7 @@ public class Procedure {
 		this.dependency = dependency;
 	}
 	
-	public Procedure(String id, String name, DSC classifier, String startEU) {
+	public Procedure(String id, String name, DSC classifier, ExecutionUnit startEU) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -47,10 +50,10 @@ public class Procedure {
 	public void setClassifier(DSC classifier) {
 		this.classifier = classifier;
 	}
-	public String getStartEU() {
+	public ExecutionUnit getStartEU() {
 		return startEU;
 	}
-	public void setStartEU(String startEU) {
+	public void setStartEU(ExecutionUnit startEU) {
 		this.startEU = startEU;
 	}
 	public ArrayList<DSC> getDependency() {
@@ -58,6 +61,18 @@ public class Procedure {
 	}
 	public void setDependency(ArrayList<DSC> dependency) {
 		this.dependency = dependency;
+	}
+	
+	public void setExecutionUnits(Map<String, ExecutionUnit> executionUnits){
+		this.executionUnits = executionUnits;
+	}
+	
+	public Map<String, ExecutionUnit> getExecutionUnits(){
+		return executionUnits;
+	}
+	
+	public ExecutionUnit getExecutionUnit(String id){
+		return executionUnits.get(id);
 	}
 
 }

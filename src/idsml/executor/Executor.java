@@ -1,5 +1,6 @@
 package idsml.executor;
 import idsml.dsc.DSC;
+import idsml.event.Register;
 import idsml.model.Model;
 import idsml.procedure.ExecutionUnit;
 import idsml.procedure.Procedure;
@@ -19,46 +20,55 @@ public class Executor {
 	Procedure currentProcedure;
 	ArrayList<ExecutionUnit> executionUnits = null;
 	
-	ExpressionEvaluator expression = new ExpressionEvaluator();
-	ScriptEvaluator script = new ScriptEvaluator();
-	
 	String statement = "";
 	
-	public void executeModel(Model model){
+	public void executeModel(Model model) throws CompileException, InvocationTargetException{
 		currentModel = model;
 		
+		
+		
 		Procedure init = model.getInit();
+		Procedure currentProcedure = init;
 		
 		executionUnits = getExecutionUnits(init);
 		
 		ExecutionUnit startEU = executionUnits.get(0); // Grab initial EU. Change to Map and init.getStartEU()
 		
+		Call result = null;
 		try {
-			executeStatement(startEU.getBody());
+			result = executeStatement(startEU.getBody());
 		} catch (CompileException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
+		
+		/**
+		 * TODO: Each model should have an event listener for the ID of the executing model, where the value is the DSC being executed
+		 */
+
+		while ((result != null) || (Register.hasEventListenerRegistered(currentModel.getId()))){
+			if (result instanceof DSCCall){
+				System.out.println("DSC to call: " + ((DSCCall)result).getDSC().getName());
+				currentProcedure = currentModel.getProcedure(((DSCCall)result).getDSC());
+				Register.registerEventListener(currentModel.getId(), currentProcedure.getClassifier().getName());
+				executeStatement(currentProcedure.getStartEU().getBody());
+			} else if (result instanceof EUCall){
+				System.out.println("EU to call: " + ((EUCall)result).getEUId());
+				executeStatement(currentProcedure.getExecutionUnit(((EUCall)result).getEUId()).getBody());
+			} else if (result instanceof EventWaitCall){
+				System.out.println("Will register: " + ((EventWaitCall)result).getEUId() + " in response to " + ((EventWaitCall)result).getEvent());
+			}
+		}
 	}
 	
 	public Call executeStatement (String statement) throws InvocationTargetException, CompileException{
 		this.statement = statement;
-		//expression.cook(statement);
-		//expression.evaluate(null);
+		ScriptEvaluator script = new ScriptEvaluator();
 		script.setReturnType(Call.class);
 		script.cook(statement);
-		Call result = (Call) script.evaluate(null);
-		
-		
-		if (result instanceof DSCCall){
-			System.out.println("DSC to call: " + ((DSCCall)result).getDSC().getName());
-		} else if (result instanceof EUCall){
-			System.out.println("EU to call: " + ((EUCall)result).getEUId());
-		} else if (result instanceof EventWaitCall){
-			System.out.println("Will register: " + ((EventWaitCall)result).getEUId() + " in response to " + ((EventWaitCall)result).getEvent());
-		}
-		return result;
+		return (Call) script.evaluate(null);
+
 	}
 	
 	public String getLastStatement(){

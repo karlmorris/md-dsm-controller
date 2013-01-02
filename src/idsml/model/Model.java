@@ -7,19 +7,27 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 public class Model {
+	UUID id;
 	String name;
 	Procedure init;
 	Map<String, ArrayList<Procedure>> procedures = new HashMap<String, ArrayList<Procedure>>();
 	
 	
-	public Model(){}
+	public Model(){
+		id = UUID.randomUUID();
+	}
 	
 	public Model (Procedure init){
+		this();
 		this.init = init;
 	}
 	
+	public String getId(){
+		return id.toString();
+	}
 	public void setInit(Procedure p){
 		this.init = p;
 	}
