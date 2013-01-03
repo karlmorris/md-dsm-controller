@@ -62,14 +62,9 @@ public class ExecutorTester {
 				dependencies1.add(secondDSC);
 				
 				ArrayList<DSC> dependencies2 = new ArrayList<DSC>();	
-				//dependencies2.add(thirdDSC);
 				
 				Procedure procedure1 = new Procedure("0001", "SendBasic1", firstDSC, dependencies1);
-				//Procedure procedure2 = new Procedure("0002", "SendBasic2", firstDSC, new ExecutionUnit("send0001", ""), dependencies1);
-				//Procedure procedure3 = new Procedure("0003", "SendBasic3", firstDSC, new ExecutionUnit("send0001", ""), dependencies1);
-				Procedure procedure2 = new Procedure("0004", "Encrypt1", secondDSC, dependencies2);
-				//Procedure procedure5 = new Procedure("0005", "Encrypt2", secondDSC, new ExecutionUnit("send0001", ""), dependencies2);
-				//Procedure procedure6 = new Procedure("0006", "Encrypt3", secondDSC, new ExecutionUnit("send0001", ""), dependencies2);
+				Procedure procedure2 = new Procedure("0002", "Encrypt1", secondDSC, dependencies2);
 				
 				
 				String command = boilerplateInclude +
@@ -85,7 +80,7 @@ public class ExecutorTester {
 						"System.out.println(20 + 20);" +
 						"idsml.statemanager.StateManager stateManager = idsml.statemanager.StateManager.getInstance();" +
 						"Attribute att = new Attribute(\"testAttribute\", (Object)\"This string is being stored as the value of the attribute\");" +
-						"System.out.println(\"Value set in state manager\");" +
+						"System.out.println(\"Checking state manager for value\");" +
 						"if (stateManager.hasAttribute(\"testAttribute\"))" +
 						"System.out.println(\"Failure: Value not cleared\");" +
 						" else " +
@@ -118,6 +113,37 @@ public class ExecutorTester {
 				
 				procedure2.setStartEU(second);
 				procedure2.addExecutionUnit(third.getId(), third);
+				
+				
+				/*
+				public String getLastStatement(){
+					return statement;
+				}
+				
+				private ArrayList<ExecutionUnit> getExecutionUnits(Procedure procedure){
+					String server = "textr.us", db = "fiu_test", user = "fiu_test", password = "fiu_test";
+					Connector connector = new MySQLConnector();
+					
+					connector.connect(user, password, server, db);
+					ArrayList<ExecutionUnit> executionUnits = connector.geExecutionUnits(procedure);
+					connector.disconnect();
+					return executionUnits;
+				}
+				
+				public void executeProcedure(DSC dsc){
+					currentProcedure = Mapper.getProcedureForDSC(dsc);
+					executionUnits = getExecutionUnits(currentProcedure);
+					statement = executionUnits.get(0).getBody();
+					try {
+						executeStatement(statement);
+					} catch (CompileException e) {
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+					}
+					
+				}
+				*/
 				
 				Repository.addProcedure(procedure1);
 

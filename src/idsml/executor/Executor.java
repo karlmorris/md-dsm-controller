@@ -1,5 +1,6 @@
 package idsml.executor;
 import idsml.dsc.DSC;
+import idsml.event.Register;
 import idsml.executor.call.Call;
 import idsml.executor.call.DSCCall;
 import idsml.executor.call.EUCall;
@@ -7,8 +8,6 @@ import idsml.executor.call.EventWaitCall;
 import idsml.model.Model;
 import idsml.procedure.ExecutionUnit;
 import idsml.procedure.Procedure;
-import idsml.repository.connector.Connector;
-import idsml.repository.connector.MySQLConnector;
 import idsml.statemanager.Attribute;
 import idsml.statemanager.StateManager;
 
@@ -28,19 +27,18 @@ public class Executor {
 	
 	StateManager stateManager = StateManager.getInstance();
 	
-	String statement = "";
-	
 	UUID id;
 	
 	public Executor(){
 		id = UUID.randomUUID();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void executeModel(Model intentModel) throws CompileException, InvocationTargetException{
 		
 		this.model = intentModel;
 		
-		
+		String stateManagerCallbackPrefix = "callbacks:";
 		
 		Procedure init = model.getInit();
 		Procedure currentProcedure = init;
@@ -67,76 +65,58 @@ public class Executor {
 		 */
 
 		while (((result != null) || init.getId() != currentProcedure.getId()) && (stateManager.hasAttribute(id.toString()))){
+
 			if (result instanceof DSCCall){
+				// If the result of the last EU execution was a DSC call
 				System.out.println("DSC to call: " + ((DSCCall)result).getDSC().getName());
 				ArrayList<CallBack> callBacks;
 				if (stateManager.hasAttribute(model.getId()))
 					callBacks = (ArrayList<CallBack>) stateManager.getAttribute(model.getId()).getValue();
 				else
 					callBacks = new ArrayList<CallBack>();
+				
+				// Register callback in statemanager
 				callBacks.add(new CallBack(currentProcedure.getClassifier(), ((DSCCall)result).getDSC(), ((DSCCall)result).getEUId()));
-				stateManager.putAttribute(new Attribute(model.getId(), callBacks));
+				stateManager.putAttribute(new Attribute(stateManagerCallbackPrefix + model.getId(), callBacks));
 				currentProcedure = model.getProcedure(((DSCCall)result).getDSC());
+				// Execute initial EU in called procedure
 				result = executeStatement(currentProcedure.getStartEU().getBody());
 			} else if (result instanceof EUCall){
+				// If the result of the last EU execution was a EU call
 				System.out.println("EU to call: " + ((EUCall)result).getEUId());
 				result = executeStatement(currentProcedure.getExecutionUnit(((EUCall)result).getEUId()).getBody());
 			} else if (result instanceof EventWaitCall){
+				// If the result of the last EU execution was a call to wait for a specific event
 				System.out.println("Will register: " + ((EventWaitCall)result).getEUId() + " in response to " + ((EventWaitCall)result).getEvent());
+				stateManager.putAttribute(new Attribute(model.getId(), model));
+				Register.registerEventListener(((EventWaitCall)result).getEvent(), new EventCallBack(model.getId(), currentProcedure.getClassifier(), ((EventWaitCall)result).getEUId()));
 			} else {
-				
-				ArrayList<CallBack> currentCallbacks = ((ArrayList<CallBack>)stateManager.getAttribute(model.getId()).getValue());
+				// If the result of the last EU execution was null, indicating completion of the procedure
+				ArrayList<CallBack> currentCallbacks = ((ArrayList<CallBack>)stateManager.getAttribute(stateManagerCallbackPrefix + model.getId()).getValue());
 				for (int i = 0; i < currentCallbacks.size(); i++){
 					CallBack callback = currentCallbacks.get(i);
 					if (callback.getCalledProcedureDSC().equals(currentProcedure.getClassifier())){
+						// If a callback exists for the specified procedure completion
+						// If none exists, the initial procedure has completed execution
+						
+						// Remove the callback to ensure it cannot be called again
 						currentCallbacks.remove(i);
+						// Set the current procedure to the calling procedure 
 						currentProcedure = model.getProcedure(callback.callingProcedureDSC);
+						// Execute specified callback EU in the calling procedure
 						result = executeStatement(model.getProcedure(callback.getCallingProcedureDSC()).getExecutionUnit(callback.getEUId()).getBody());
 					}
 				}
-				
 			}
-
 		}
 	}
 	
 	public Call executeStatement (String statement) throws InvocationTargetException, CompileException{
-		this.statement = statement;
 		ScriptEvaluator script = new ScriptEvaluator();
 		script.setReturnType(Call.class);
 		script.cook(statement);
 		return (Call) script.evaluate(null);
-
 	}
-	
-	public String getLastStatement(){
-		return statement;
-	}
-	
-	private ArrayList<ExecutionUnit> getExecutionUnits(Procedure procedure){
-		String server = "textr.us", db = "fiu_test", user = "fiu_test", password = "fiu_test";
-		Connector connector = new MySQLConnector();
-		
-		connector.connect(user, password, server, db);
-		ArrayList<ExecutionUnit> executionUnits = connector.geExecutionUnits(procedure);
-		connector.disconnect();
-		return executionUnits;
-	}
-	
-	public void executeProcedure(DSC dsc){
-		currentProcedure = Mapper.getProcedureForDSC(dsc);
-		executionUnits = getExecutionUnits(currentProcedure);
-		statement = executionUnits.get(0).getBody();
-		try {
-			executeStatement(statement);
-		} catch (CompileException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		
-	}
-
 }
 
 class CallBack{
