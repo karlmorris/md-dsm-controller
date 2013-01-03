@@ -88,7 +88,9 @@ public class Executor {
 			} else if (result instanceof EventWaitCall){
 				// If the result of the last EU execution was a call to wait for a specific event
 				System.out.println("Will register: " + ((EventWaitCall)result).getEUId() + " in response to " + ((EventWaitCall)result).getEvent());
+				// Store model in state manager for recall when event occurs
 				stateManager.putAttribute(new Attribute(model.getId(), model));
+				// Register requested event in event listener with current procedure and stated EU as responsible model elements
 				Register.registerEventListener(((EventWaitCall)result).getEvent(), new EventCallBack(model.getId(), currentProcedure.getClassifier(), ((EventWaitCall)result).getEUId()));
 			} else {
 				// If the result of the last EU execution was null, indicating completion of the procedure
