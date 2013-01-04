@@ -22,6 +22,6 @@ public class Register {
 	}
 	
 	public static EventCallBack getRegisteredEventCallBack(String event){
-		return register.get(event);
+		return register.remove(event);
 	}
 }
