@@ -1,10 +1,10 @@
 package idsml.selector;
 
 import idsml.dsc.DSC;
-import idsml.model.Model;
+import idsml.model.IntentModel;
 
 import java.util.ArrayList;
 
 public interface Validator {
-	public ArrayList<Model> validateModels(ArrayList<Model> models, DSC dsc);
+	public ArrayList<IntentModel> validateModels(ArrayList<IntentModel> models, DSC dsc);
 }

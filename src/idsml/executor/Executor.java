@@ -1,11 +1,12 @@
 package idsml.executor;
 import idsml.dsc.DSC;
+import idsml.event.EventCallBack;
 import idsml.event.Register;
 import idsml.executor.call.Call;
 import idsml.executor.call.DSCCall;
 import idsml.executor.call.EUCall;
 import idsml.executor.call.EventWaitCall;
-import idsml.model.Model;
+import idsml.model.IntentModel;
 import idsml.procedure.ExecutionUnit;
 import idsml.procedure.Procedure;
 import idsml.statemanager.Attribute;
@@ -21,7 +22,7 @@ import org.codehaus.janino.*;
 
 public class Executor {
 	
-	Model model;
+	IntentModel model;
 	Procedure currentProcedure;
 	ArrayList<ExecutionUnit> executionUnits = null;
 	
@@ -33,32 +34,26 @@ public class Executor {
 		id = UUID.randomUUID();
 	}
 	
+	public void executeModel(IntentModel intentModel) throws CompileException, InvocationTargetException{
+		stateManager.putAttribute(new Attribute(intentModel.getId(), intentModel));
+		executeModel(new EventCallBack(intentModel.getId(), intentModel.getInit().getClassifier(), intentModel.getInit().getStartEU().getId()));
+	}
+	
 	@SuppressWarnings("unchecked")
-	public void executeModel(Model intentModel) throws CompileException, InvocationTargetException{
+	public void executeModel(EventCallBack modelCallback) throws CompileException, InvocationTargetException{
 		
-		this.model = intentModel;
+		this.model = (IntentModel)stateManager.getAttribute(modelCallback.getModelId()).getValue();
 		
 		String stateManagerCallbackPrefix = "callbacks:";
 		
 		Procedure init = model.getInit();
-		Procedure currentProcedure = init;
+		Procedure currentProcedure = model.getProcedure(modelCallback.getCallbackProcedureDSC());;
 		
 		stateManager.putAttribute(new Attribute(id.toString(), init));
+
+		ExecutionUnit startEU = currentProcedure.getExecutionUnit(modelCallback.geteUId());
 		
-		//executionUnits = getExecutionUnits(init);
-		
-		//ExecutionUnit startEU = executionUnits.get(0); // Grab initial EU. Change to Map and init.getStartEU()
-		
-		ExecutionUnit startEU = init.getStartEU();
-		
-		Call result = null;
-		try {
-			result = executeStatement(startEU.getBody());
-		} catch (CompileException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
+		Call result = executeStatement(startEU.getBody());
 		
 		/**
 		 * TODO: Each model should have an event listener for the ID of the executing model, where the value is the DSC being executed
@@ -70,8 +65,8 @@ public class Executor {
 				// If the result of the last EU execution was a DSC call
 				System.out.println("DSC to call: " + ((DSCCall)result).getDSC().getName());
 				ArrayList<CallBack> callBacks;
-				if (stateManager.hasAttribute(model.getId()))
-					callBacks = (ArrayList<CallBack>) stateManager.getAttribute(model.getId()).getValue();
+				if (stateManager.hasAttribute(stateManagerCallbackPrefix + model.getId()))
+					callBacks = (ArrayList<CallBack>) stateManager.getAttribute(stateManagerCallbackPrefix + model.getId()).getValue();
 				else
 					callBacks = new ArrayList<CallBack>();
 				
@@ -92,6 +87,9 @@ public class Executor {
 				stateManager.putAttribute(new Attribute(model.getId(), model));
 				// Register requested event in event listener with current procedure and stated EU as responsible model elements
 				Register.registerEventListener(((EventWaitCall)result).getEvent(), new EventCallBack(model.getId(), currentProcedure.getClassifier(), ((EventWaitCall)result).getEUId()));
+				// Set values to exit execution loop.
+				result = null;
+				currentProcedure = init;
 			} else {
 				// If the result of the last EU execution was null, indicating completion of the procedure
 				ArrayList<CallBack> currentCallbacks = ((ArrayList<CallBack>)stateManager.getAttribute(stateManagerCallbackPrefix + model.getId()).getValue());

@@ -1,9 +1,9 @@
 package idsml.selector;
 
-import idsml.model.Model;
+import idsml.model.IntentModel;
 
 import java.util.ArrayList;
 
 public interface Selector {
-	public Model getBestModel(ArrayList<Model> models);
+	public IntentModel getBestModel(ArrayList<IntentModel> models);
 }

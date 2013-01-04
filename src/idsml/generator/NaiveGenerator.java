@@ -1,7 +1,7 @@
 package idsml.generator;
 
 import idsml.dsc.DSC;
-import idsml.model.Model;
+import idsml.model.IntentModel;
 import idsml.procedure.Procedure;
 import idsml.repository.Repository;
 
@@ -9,9 +9,9 @@ import java.util.ArrayList;
 
 public class NaiveGenerator implements Generator{
 	
-	public ArrayList<Model> generateModels(DSC initDSC) {
+	public ArrayList<IntentModel> generateModels(DSC initDSC) {
 		/** Collection to store final set of models */
-		ArrayList<Model> matchingModels = new ArrayList<Model>();
+		ArrayList<IntentModel> matchingModels = new ArrayList<IntentModel>();
 		
 		/** Get procedures for the current DSC */
 		ArrayList<Procedure> matchingProcedures = Repository.getProceduresWithDSC(initDSC);
@@ -23,16 +23,16 @@ public class NaiveGenerator implements Generator{
 		for (int i = 0; i < matchingProcedures.size(); i++){
 			
 			/** Temporary collection of models for current level */
-			ArrayList<Model> tempMatchingModels = new ArrayList<Model>();
+			ArrayList<IntentModel> tempMatchingModels = new ArrayList<IntentModel>();
 			ArrayList<DSC> dependencies = matchingProcedures.get(i).getDependency();
 			
 			
 			/** If no dependencies, return model with only current procedure */
 			if (dependencies.isEmpty()){
-				matchingModels.add(new Model(matchingProcedures.get(i)));
+				matchingModels.add(new IntentModel(matchingProcedures.get(i)));
 			} else {
 				/** If further dependencies, make recursive call, then join */
-				ArrayList<Model> subModels = null;
+				ArrayList<IntentModel> subModels = null;
 				for (int j = 0; j < dependencies.size(); j++){
 					subModels = generateModels(dependencies.get(j));
 					
@@ -58,11 +58,11 @@ public class NaiveGenerator implements Generator{
 	/*
 	 * Create new set of models from initial procedure and sub models
 	 */
-	static ArrayList<Model> joinModels(Procedure p, ArrayList<Model> ml){
-		ArrayList<Model> newModels = new ArrayList<Model>();
+	static ArrayList<IntentModel> joinModels(Procedure p, ArrayList<IntentModel> ml){
+		ArrayList<IntentModel> newModels = new ArrayList<IntentModel>();
 		
 		for (int i = 0; i < ml.size(); i++){
-			Model m = new Model(p);
+			IntentModel m = new IntentModel(p);
 			m.addDependency(p.getId(), ml.get(i).getInit());
 			m.addAllDependencies(ml.get(i).getAllDependencies());
 			newModels.add(m);
@@ -73,7 +73,7 @@ public class NaiveGenerator implements Generator{
 	/*
 	 * Join models by merging on initial procedure of first set of models (cross product).
 	 */
-	static void mergeModels(ArrayList<Model> models, ArrayList<Model> sub){
+	static void mergeModels(ArrayList<IntentModel> models, ArrayList<IntentModel> sub){
 		for (int i = 0; i < models.size(); i++){
 			for (int j = 0; j < sub.size(); j++){
 				models.get(i).addDependency(models.get(i).getInit().getId(), sub.get(j).getInit());

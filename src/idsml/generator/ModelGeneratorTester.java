@@ -2,7 +2,7 @@ package idsml.generator;
 
 import idsml.dsc.DSC;
 import idsml.dsc.Type;
-import idsml.model.Model;
+import idsml.model.IntentModel;
 import idsml.procedure.Procedure;
 import idsml.repository.Repository;
 import idsml.selector.NaiveSelector;
@@ -98,9 +98,9 @@ public static void main(String[] args) {
 		//Set up an initial DSC matching a command.
 		DSC initialDSC = sendDSC;
 		
-		ArrayList<Model> matchingModels = null;
-		ArrayList<Model> validModels = null;
-		Model bestModel = null;
+		ArrayList<IntentModel> matchingModels = null;
+		ArrayList<IntentModel> validModels = null;
+		IntentModel bestModel = null;
 		
 		//Begin timing
 		long startTime, endTime, duration = 0, totalTime = 0;

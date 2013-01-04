@@ -1,7 +1,7 @@
 package idsml.selector;
 
 import idsml.dsc.DSC;
-import idsml.model.Model;
+import idsml.model.IntentModel;
 import idsml.procedure.Procedure;
 
 import java.util.ArrayList;
@@ -10,8 +10,8 @@ import java.util.Map;
 
 public class NaiveValidator implements Validator{
 
-	public ArrayList<Model> validateModels(ArrayList<Model> models, DSC dsc){
-		ArrayList<Model> validModels = new ArrayList<Model>();
+	public ArrayList<IntentModel> validateModels(ArrayList<IntentModel> models, DSC dsc){
+		ArrayList<IntentModel> validModels = new ArrayList<IntentModel>();
 		
 		
 		for (int i = 0; i < models.size(); i++){

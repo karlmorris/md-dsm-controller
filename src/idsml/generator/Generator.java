@@ -1,9 +1,9 @@
 package idsml.generator;
 import idsml.dsc.DSC;
-import idsml.model.Model;
+import idsml.model.IntentModel;
 
 import java.util.ArrayList;
 
 public interface Generator {
-		public ArrayList<Model> generateModels(DSC initDSC);
+		public ArrayList<IntentModel> generateModels(DSC initDSC);
 }

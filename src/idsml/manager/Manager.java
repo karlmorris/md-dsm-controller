@@ -5,7 +5,7 @@ import idsml.model.*;
 import idsml.procedure.Procedure;
 
 public class Manager {
-	private Model currentModel;
+	private IntentModel currentModel;
 	
 	public Procedure getProcedureForDSC(DSC dsc){
 		return currentModel.getProcedure(dsc);

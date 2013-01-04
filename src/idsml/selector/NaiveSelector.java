@@ -1,12 +1,12 @@
 package idsml.selector;
 
-import idsml.model.Model;
+import idsml.model.IntentModel;
 
 import java.util.ArrayList;
 
 public class NaiveSelector implements Selector{
-	public Model getBestModel(ArrayList<Model> models){
-		Model bestModel = null;
+	public IntentModel getBestModel(ArrayList<IntentModel> models){
+		IntentModel bestModel = null;
 		int bestModelCost = Integer.MAX_VALUE;
 		
 		for (int i = 0; i < models.size(); i++){
@@ -20,7 +20,7 @@ public class NaiveSelector implements Selector{
 		return bestModel;
 	}
 	
-	static int modelCost(Model m){
+	static int modelCost(IntentModel m){
 		return m.getAllDependencies().size();
 	}
 }

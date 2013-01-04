@@ -1,6 +1,5 @@
 package idsml.event;
 
-import idsml.executor.EventCallBack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,5 +19,9 @@ public class Register {
 	
 	public static boolean hasEventListenerRegistered(String event){
 		return register.containsKey(event);
+	}
+	
+	public static EventCallBack getRegisteredEventCallBack(String event){
+		return register.get(event);
 	}
 }

@@ -78,7 +78,10 @@ public class Procedure {
 	}
 	
 	public ExecutionUnit getExecutionUnit(String id){
-		return executionUnits.get(id);
+		if (startEU.getId().equals(id)) 
+			return startEU;
+		else
+			return executionUnits.get(id);
 	}
 
 }
