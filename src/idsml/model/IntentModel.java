@@ -3,13 +3,20 @@ package idsml.model;
 import idsml.dsc.DSC;
 import idsml.procedure.Procedure;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
-public class IntentModel {
+public class IntentModel implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 566146086579827490L;
+	
 	UUID id;
 	String name;
 	Procedure init;

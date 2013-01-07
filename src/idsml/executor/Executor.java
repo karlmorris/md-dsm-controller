@@ -6,6 +6,7 @@ import idsml.executor.call.Call;
 import idsml.executor.call.DSCCall;
 import idsml.executor.call.EUCall;
 import idsml.executor.call.EventWaitCall;
+import idsml.generator.PostModelGenerationOperation;
 import idsml.model.IntentModel;
 import idsml.procedure.ExecutionUnit;
 import idsml.procedure.Procedure;
@@ -15,6 +16,7 @@ import idsml.statemanager.StateManager;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import org.codehaus.commons.compiler.CompileException;
 import org.codehaus.janino.*;
@@ -33,6 +35,14 @@ public class Executor {
 	public Executor(){
 		id = UUID.randomUUID();
 	}
+	
+	public void executeModel(IntentModel intentModel, PostModelGenerationOperation preCond) throws CompileException, InvocationTargetException, ExecutionException, PreConditionException{
+		if (preCond.execute())
+			executeModel(intentModel);
+		else
+			throw new PreConditionException("Model execution precondition failed");
+	}
+	
 	
 	public void executeModel(IntentModel intentModel) throws CompileException, InvocationTargetException{
 		stateManager.putAttribute(new Attribute(intentModel.getId(), intentModel));

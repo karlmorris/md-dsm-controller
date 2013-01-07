@@ -4,6 +4,7 @@ import idsml.dsc.DSC;
 import idsml.dsc.Type;
 import idsml.event.Register;
 import idsml.generator.NaiveGenerator;
+import idsml.generator.Negotiate;
 import idsml.model.IntentModel;
 import idsml.procedure.ExecutionUnit;
 import idsml.procedure.Procedure;
@@ -20,42 +21,11 @@ public class ExecutorTester {
 	public static void main (String[] args){
 		
 		String boilerplateInclude = "import idsml.executor.call.*; import idsml.executor.*; import idsml.dsc.*; import idsml.statemanager.*;import idsml.repository.*;import idsml.model.*;";
-		/*
-		String command = "import idsml.executor.*; import idsml.dsc.*; import idsml.statemanager.*;import idsml.repository.*;import idsml.model.*;" +
-				"System.out.println(5 + 5);" +
-				"idsml.statemanager.Manager stateManager = idsml.statemanager.Manager.getInstance();" +
-				"Attribute att = new Attribute(\"testAttribute\", (Object)\"This string is being stored as the value of the attribute\");" +
-				"stateManager.putAttribute(att);" +
-				"return new EventWaitCall(\"idOfEvent\", \"idOfNextEU\");";
-		
-		try {
-			executor.executeStatement(command);
-		} catch (CompileException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		
-		command = "import idsml.executor.*; import idsml.statemanager.*;import idsml.repository.*; import idsml.model.*; import idsml.dsc.*;" +
-				"System.out.println(10 + 10);" +
-				"idsml.statemanager.Manager stateManager = idsml.statemanager.Manager.getInstance();" +
-				"System.out.println((String)stateManager.getAttribute(\"testAttribute\").getValue());" +
-				"return new DSCCall(new DSC(\"dummyDSC\", Type.OPER), \"EUIdToExecuteOnReturn\");";
-		try {
-			executor.executeStatement(command);
-		} catch (CompileException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		
-		*/
 		
 		// Set up DSCs
 
 		DSC firstDSC = new DSC("First", Type.OPER);
 		DSC secondDSC = new DSC("Second", Type.OPER);
-		//DSC thirdDSC = new DSC("Third", Type.OPER);
 
 		ArrayList<DSC> dependencies1 = new ArrayList<DSC>();	
 		dependencies1.add(secondDSC);
@@ -64,7 +34,6 @@ public class ExecutorTester {
 		
 		Procedure procedure1 = new Procedure("0001", "SendBasic1", firstDSC, dependencies1);
 		Procedure procedure2 = new Procedure("0002", "Encrypt1", secondDSC, dependencies2);
-		
 		
 		String p1c1 = boilerplateInclude +
 				"System.out.println(5 + 5);" +
@@ -83,7 +52,7 @@ public class ExecutorTester {
 				"if (stateManager.hasAttribute(\"testAttribute\"))" +
 				"System.out.println(\"Failure: Value not cleared\");" +
 				" else " +
-				"System.out.println(\"Sucess: Value cleared\");" +
+				"System.out.println(\"Success: Value cleared\");" +
 				"return null;";
 		
 		ExecutionUnit start = new ExecutionUnit("start", p1c1);
@@ -191,7 +160,7 @@ public class ExecutorTester {
 		System.out.println("Beginnning Model Execution");
 		
 		try {
-			(new Executor()).executeModel(bestModel);
+			(new Executor()).executeModel(bestModel, new Negotiate("System.out.println(\"Precondition executing...\"); return true;"));
 		} catch (CompileException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

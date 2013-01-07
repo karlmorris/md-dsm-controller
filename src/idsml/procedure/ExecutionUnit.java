@@ -1,6 +1,13 @@
 package idsml.procedure;
 
-public class ExecutionUnit {
+import java.io.Serializable;
+
+public class ExecutionUnit implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 554738223676867815L;
+	
 	String id;
 	String body = null;
 	

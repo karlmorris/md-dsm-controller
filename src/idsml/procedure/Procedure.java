@@ -2,11 +2,18 @@ package idsml.procedure;
 
 import idsml.dsc.DSC;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Procedure {
+public class Procedure implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5184762094889726348L;
+	
+	
 	String id;
 	String name;
 	DSC classifier;
