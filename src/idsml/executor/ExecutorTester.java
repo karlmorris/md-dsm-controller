@@ -45,7 +45,7 @@ public class ExecutorTester {
 				"return new DSCCall(secondDSC, \"finalEU\");";
 		
 		String p1c2 = boilerplateInclude +
-				"System.out.println(30 + 20);" +
+				"System.out.println(30 + 30);" +
 				"idsml.statemanager.StateManager stateManager = idsml.statemanager.StateManager.getInstance();" +
 				"Attribute att = new Attribute(\"testAttribute\", (Object)\"This string is being stored as the value of the attribute\");" +
 				"System.out.println(\"Checking state manager for value\");" +
@@ -79,16 +79,30 @@ public class ExecutorTester {
 				"idsml.statemanager.StateManager stateManager = idsml.statemanager.StateManager.getInstance();" +
 				"System.out.println(\"Clearing state information\");" +
 				"stateManager.clearAttribute(\"testAttribute\");" +
-				"return null;";
+				"return new EUCall(\"loop\");";
+		
+		String p2c4 = boilerplateInclude +
+				"System.out.println(30 + 20);" +
+				"idsml.statemanager.StateManager stateManager = idsml.statemanager.StateManager.getInstance();" +
+				"int counter = 0;" +
+				"if (stateManager.hasAttribute(\"counter\")) " +
+				" counter = ((Integer)stateManager.getAttribute(\"counter\").getValue()) + 1;" +
+				"if (counter > 50) " +
+				"return null;" +
+				" else " +
+				"System.out.println(\"Counting...: \" + counter);" +
+				"stateManager.putAttribute(new Attribute(\"counter\", new Integer(counter)));" +
+				"return new EUCall(\"loop\");";
 		
 		ExecutionUnit second = new ExecutionUnit("second", p2c1);
 		ExecutionUnit third = new ExecutionUnit("third", p2c2);
 		ExecutionUnit fourth = new ExecutionUnit("fourth", p2c3);
+		ExecutionUnit fifth = new ExecutionUnit("loop", p2c4);
 		
 		procedure2.setStartEU(second);
 		procedure2.addExecutionUnit(third);
 		procedure2.addExecutionUnit(fourth);
-		
+		procedure2.addExecutionUnit(fifth);
 		
 		/*
 		public String getLastStatement(){
