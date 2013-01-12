@@ -141,18 +141,14 @@ public class ExecutorTester {
 		//Set up an initial DSC matching a command.
 		DSC initialDSC = firstDSC;
 		
-		ArrayList<IntentModel> matchingModels = null;
-		ArrayList<IntentModel> validModels = null;
-		IntentModel bestModel = null;
-		
 		// Find all models which match command
-		matchingModels = (new NaiveGenerator()).generateModels(initialDSC);
+		ArrayList<IntentModel> matchingModels = (new NaiveGenerator()).generateModels(initialDSC);
 
 		// Find valid models based on user preferences
-		validModels = (new NaiveValidator()).validateModels(matchingModels, firstDSC);
+		ArrayList<IntentModel> validModels = (new NaiveValidator()).validateModels(matchingModels, firstDSC);
 
 		// Find the best model based on cost
-		bestModel = (new NaiveSelector()).getBestModel(validModels);
+		IntentModel bestModel = (new NaiveSelector()).getBestModel(validModels);
 		
 		
 		System.out.println(bestModel.getAllDependencies());
@@ -184,6 +180,8 @@ public class ExecutorTester {
 		}
 		
 		
+		// Simulate event received.
+		System.out.println("Event \"testevent\" received");
 		try {
 			(new Executor()).executeModel(Register.getRegisteredEventCallBack("testevent"));
 		} catch (CompileException e) {
