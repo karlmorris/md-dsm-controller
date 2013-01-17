@@ -121,6 +121,12 @@ public class Executor {
 		}
 	}
 	
+	public void executeProcedure(Procedure procedure) throws CompileException, InvocationTargetException{
+		IntentModel model = new IntentModel();
+		model.setInit(procedure);
+		executeModel(model);	
+	}
+	
 	public Call executeStatement (String statement) throws InvocationTargetException, CompileException{
 		ScriptEvaluator script = new ScriptEvaluator();
 		script.setReturnType(Call.class);
