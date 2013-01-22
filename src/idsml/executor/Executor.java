@@ -122,8 +122,7 @@ public class Executor {
 	}
 	
 	public void executeProcedure(Procedure procedure) throws CompileException, InvocationTargetException{
-		IntentModel model = new IntentModel();
-		model.setInit(procedure);
+		IntentModel model = new IntentModel(procedure);
 		executeModel(model);	
 	}
 	
