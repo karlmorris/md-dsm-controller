@@ -2,7 +2,7 @@ package idsml.executor;
 
 import idsml.dsc.DSC;
 import idsml.dsc.Type;
-import idsml.event.Register;
+import idsml.event.EventRegister;
 import idsml.generator.NaiveGenerator;
 import idsml.generator.Negotiate;
 import idsml.model.IntentModel;
@@ -183,7 +183,7 @@ public class ExecutorTester {
 		// Simulate event received.
 		System.out.println("Event \"testevent\" received");
 		try {
-			(new Executor()).executeModel(Register.getRegisteredEventCallBack("testevent"));
+			(new Executor()).executeModel(EventRegister.getRegisteredEventCallBack("testevent"));
 		} catch (CompileException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

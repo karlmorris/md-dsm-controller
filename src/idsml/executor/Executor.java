@@ -1,7 +1,7 @@
 package idsml.executor;
 import idsml.dsc.DSC;
 import idsml.event.EventCallBack;
-import idsml.event.Register;
+import idsml.event.EventRegister;
 import idsml.executor.call.Call;
 import idsml.executor.call.DSCCall;
 import idsml.executor.call.EUCall;
@@ -96,7 +96,7 @@ public class Executor {
 				// Store model in state manager for recall when event occurs
 				stateManager.putAttribute(new Attribute(model.getId(), model));
 				// Register requested event in event listener with current procedure and stated EU as responsible model elements
-				Register.registerEventListener(((EventWaitCall)result).getEvent(), new EventCallBack(model.getId(), currentProcedure.getClassifier(), ((EventWaitCall)result).getEUId()));
+				EventRegister.registerEventListener(((EventWaitCall)result).getEvent(), new EventCallBack(model.getId(), currentProcedure.getClassifier(), ((EventWaitCall)result).getEUId()));
 				// Set values to exit execution loop.
 				result = null;
 				currentProcedure = init;

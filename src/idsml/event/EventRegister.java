@@ -4,7 +4,7 @@ package idsml.event;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Register {
+public class EventRegister {
 	
 	
 	static Map<String, EventCallBack> register = new HashMap<String, EventCallBack>();
