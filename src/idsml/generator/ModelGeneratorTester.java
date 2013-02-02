@@ -4,7 +4,7 @@ import idsml.dsc.DSC;
 import idsml.dsc.Type;
 import idsml.model.IntentModel;
 import idsml.procedure.Procedure;
-import idsml.repository.Repository;
+import idsml.repository.ProcedureList;
 import idsml.selector.NaiveSelector;
 import idsml.selector.NaiveValidator;
 
@@ -41,20 +41,20 @@ public static void main(String[] args) {
 		Procedure procedure0 = new Procedure("0000", "Compress2", compressDSC);
 		
 		
-		Repository.addProcedure(procedure1);
-		Repository.addProcedure(procedure2);
-		Repository.addProcedure(procedure3);
-		Repository.addProcedure(procedure4);
-		Repository.addProcedure(procedure5);
-		Repository.addProcedure(procedure6);
-		Repository.addProcedure(procedure7);
-		Repository.addProcedure(procedure8);
-		Repository.addProcedure(procedure9);
-		Repository.addProcedure(procedure0);
+		ProcedureList.addProcedure(procedure1);
+		ProcedureList.addProcedure(procedure2);
+		ProcedureList.addProcedure(procedure3);
+		ProcedureList.addProcedure(procedure4);
+		ProcedureList.addProcedure(procedure5);
+		ProcedureList.addProcedure(procedure6);
+		ProcedureList.addProcedure(procedure7);
+		ProcedureList.addProcedure(procedure8);
+		ProcedureList.addProcedure(procedure9);
+		ProcedureList.addProcedure(procedure0);
 		
 		for (int i = 0; i < 90; i++){
 			Procedure procedure = new Procedure(String.valueOf(i), "Compress2", new DSC("Test", Type.OPER));
-			Repository.addProcedure(procedure);
+			ProcedureList.addProcedure(procedure);
 		}
 		
 		/*

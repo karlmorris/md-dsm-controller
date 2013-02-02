@@ -8,7 +8,7 @@ import idsml.generator.Negotiate;
 import idsml.model.IntentModel;
 import idsml.procedure.ExecutionUnit;
 import idsml.procedure.Procedure;
-import idsml.repository.Repository;
+import idsml.repository.ProcedureList;
 import idsml.selector.NaiveSelector;
 import idsml.selector.NaiveValidator;
 
@@ -134,9 +134,9 @@ public class ExecutorTester {
 		}
 		*/
 		
-		Repository.addProcedure(procedure1);
+		ProcedureList.addProcedure(procedure1);
 
-		Repository.addProcedure(procedure2);
+		ProcedureList.addProcedure(procedure2);
 		
 		//Set up an initial DSC matching a command.
 		DSC initialDSC = firstDSC;

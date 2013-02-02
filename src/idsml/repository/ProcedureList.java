@@ -5,7 +5,7 @@ import idsml.procedure.Procedure;
 
 import java.util.ArrayList;
 
-public class Repository {
+public class ProcedureList {
 	static ArrayList<Procedure> procedures = new ArrayList<Procedure>();
 	
 	public static void addProcedure(Procedure procedure){

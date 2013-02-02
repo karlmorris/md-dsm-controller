@@ -3,7 +3,7 @@ package idsml.generator;
 import idsml.dsc.DSC;
 import idsml.model.IntentModel;
 import idsml.procedure.Procedure;
-import idsml.repository.Repository;
+import idsml.repository.ProcedureList;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ public class NaiveGenerator implements Generator{
 		ArrayList<IntentModel> matchingModels = new ArrayList<IntentModel>();
 		
 		/** Get procedures for the current DSC */
-		ArrayList<Procedure> matchingProcedures = Repository.getProceduresWithDSC(initDSC);
+		ArrayList<Procedure> matchingProcedures = ProcedureList.getProceduresWithDSC(initDSC);
 		
 		if (matchingProcedures.isEmpty()){
 			return null;
