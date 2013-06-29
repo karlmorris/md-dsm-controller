@@ -115,7 +115,7 @@ public class Executor {
 						// Set the current procedure to the calling procedure 
 						currentProcedure = model.getProcedure(callback.callingProcedureDSC);
 						// Execute specified callback EU in the calling procedure
-						result = executeStatement(model.getProcedure(callback.getCallingProcedureDSC()).getExecutionUnit(callback.getEUId()).getBody());
+						result = executeStatement(model.getProcedure(callback.getCallingProcedureDSC()).getExecutionUnit(callback.getEUId()).getCompiledBody());
 					}
 				}
 			}
@@ -134,7 +134,7 @@ public class Executor {
 		return (Call) script.evaluate(null);
 	}
 	
-	public Call exexcuteStatement (ScriptEvaluator script) throws InvocationTargetException, CompileException{
+	public Call executeStatement (ScriptEvaluator script) throws InvocationTargetException, CompileException{
 		return (Call) script.evaluate(null);
 	}
 }

@@ -18,8 +18,8 @@ import dsvm.repository.Repository;
 import dsvm.selector.NaiveSelector;
 import dsvm.selector.NaiveValidator;
 
-public class ExecutorTester {
-	public static void main (String[] args){
+public class ExecutorManager {
+	public static void executeScript(String script) {
 		
 		String boilerplateInclude = "import dsvm.executor.call.*; import dsvm.executor.*; import dsvm.dsc.*; import dsvm.statemanager.*;import dsvm.repository.*;import dsvm.model.*;";
 		
@@ -67,6 +67,7 @@ public class ExecutorTester {
 				"System.out.println(10 + 10);" +
 				"dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();" +
 				"System.out.println((String)stateManager.getAttribute(\"testAttribute\").getValue());" +
+				"dsvm.broker.I_Manager_Stub.APICall(\"API Call Data\");" +
 				"return new EventWaitCall(\"testevent\", \"third\");";
 		
 		// return new EUCall(\"third\");
@@ -170,6 +171,9 @@ public class ExecutorTester {
 		
 		System.out.println("Beginnning Model Execution");
 		
+		long startTime = 0, runTime = 0;
+		
+		startTime = System.currentTimeMillis();
 		
 		try {
 			(new Executor()).executeModel(bestModel, new Negotiate("System.out.println(\"Precondition executing...\"); return true;"));
@@ -181,11 +185,18 @@ public class ExecutorTester {
 			e.printStackTrace();
 		}
 		
-		
 		// Simulate event received.
-		System.out.println("Event \"testevent\" received");
+		//handleEvent("testevent");
+		
+		runTime = System.currentTimeMillis() - startTime;
+		
+		System.out.println("Total running time: " + runTime);
+	}
+	
+	public static void handleEvent(String event) {
+		System.out.println("Event \"" + event + "\" received");
 		try {
-			(new Executor()).executeModel(EventRegister.getRegisteredEventCallBack("testevent"));
+			(new Executor()).executeModel(EventRegister.getRegisteredEventCallBack(event));
 		} catch (CompileException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
