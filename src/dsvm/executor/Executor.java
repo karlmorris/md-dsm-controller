@@ -64,7 +64,7 @@ public class Executor {
 
 		ExecutionUnit startEU = currentProcedure.getExecutionUnit(modelCallback.geteUId());
 		
-		Call result = executeStatement(startEU.getBody());
+		Call result = executeStatement(startEU.getCompiledBody());
 		
 		/**
 		 * TODO: Each model should have an event listener for the ID of the executing model, where the value is the DSC being executed
@@ -86,11 +86,11 @@ public class Executor {
 				stateManager.putAttribute(new Attribute(stateManagerCallbackPrefix + model.getId(), callBacks));
 				currentProcedure = model.getProcedure(((DSCCall)result).getDSC());
 				// Execute initial EU in called procedure
-				result = executeStatement(currentProcedure.getStartEU().getBody());
+				result = executeStatement(currentProcedure.getStartEU().getCompiledBody());
 			} else if (result instanceof EUCall){
 				// If the result of the last EU execution was a EU call
 				System.out.println("EU to call: " + ((EUCall)result).getEUId());
-				result = executeStatement(currentProcedure.getExecutionUnit(((EUCall)result).getEUId()).getBody());
+				result = executeStatement(currentProcedure.getExecutionUnit(((EUCall)result).getEUId()).getCompiledBody());
 			} else if (result instanceof EventWaitCall){
 				// If the result of the last EU execution was a call to wait for a specific event
 				System.out.println("Will register: " + ((EventWaitCall)result).getEUId() + " in response to " + ((EventWaitCall)result).getEvent());
@@ -127,7 +127,7 @@ public class Executor {
 		executeModel(model);	
 	}
 	
-	public Call executeStatement (String statement) throws InvocationTargetException, CompileException{
+	public Call executeStatement_Bak (String statement) throws InvocationTargetException, CompileException{
 		ScriptEvaluator script = new ScriptEvaluator();
 		script.setReturnType(Call.class);
 		script.cook(statement);

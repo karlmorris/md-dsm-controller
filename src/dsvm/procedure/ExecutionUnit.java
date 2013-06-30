@@ -46,11 +46,10 @@ public class ExecutionUnit implements Serializable{
 	public void setBody(String body) {
 		this.body = body;
 		try {
-			script.cook(body);
 			script.setReturnType(Call.class);
+			script.cook(body);
 		} catch (CompileException e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
-	
 }
