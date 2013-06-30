@@ -17,11 +17,11 @@ public class I_Manager_Stub {
 class ReturnEvent implements Runnable {
     public void run() {
 		try {
-			Thread.sleep(8000);
+			Thread.sleep(6000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		System.out.println("return event");
-		ExecutorManager.handleEvent("testevent");
+		ExecutorManager.getInstance().handleEvent("testevent");
     }
 }

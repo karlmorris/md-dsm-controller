@@ -19,7 +19,10 @@ import dsvm.selector.NaiveSelector;
 import dsvm.selector.NaiveValidator;
 
 public class ExecutorManager {
-	public static void executeScript(String script) {
+	
+	private static ExecutorManager instance = null;
+	
+	public void executeScript(String script) {
 		
 		String boilerplateInclude = "import dsvm.executor.call.*; import dsvm.executor.*; import dsvm.dsc.*; import dsvm.statemanager.*;import dsvm.repository.*;import dsvm.model.*;";
 		
@@ -185,15 +188,12 @@ public class ExecutorManager {
 			e.printStackTrace();
 		}
 		
-		// Simulate event received.
-		//handleEvent("testevent");
-		
 		runTime = System.currentTimeMillis() - startTime;
 		
 		System.out.println("Total running time: " + runTime);
 	}
 	
-	public static void handleEvent(String event) {
+	public void handleEvent(String event) {
 		System.out.println("Event \"" + event + "\" received");
 		try {
 			(new Executor()).executeModel(EventRegister.getRegisteredEventCallBack(event));
@@ -204,5 +204,11 @@ public class ExecutorManager {
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	public static ExecutorManager getInstance(){
+		if (instance == null)
+			instance = new ExecutorManager();
+		return instance;
 	}
 }
