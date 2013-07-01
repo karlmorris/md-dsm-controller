@@ -17,7 +17,7 @@ public class I_Manager_Stub {
 class ReturnEvent implements Runnable {
     public void run() {
 		try {
-			Thread.sleep(6000);
+			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

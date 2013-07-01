@@ -1,6 +1,5 @@
 package dsvm.executor;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
@@ -17,23 +16,29 @@ import dsvm.procedure.Procedure;
 import dsvm.repository.Repository;
 import dsvm.selector.NaiveSelector;
 import dsvm.selector.NaiveValidator;
+import dsvm.statemanager.Attribute;
 
 public class ExecutorManager {
 	
 	private static ExecutorManager instance = null;
 	
-	public void executeScript(String script) {
+	public void executeScript(String controlScript) {
 		
-		DSC firstDSC = new DSC("First", Type.OPER);
+		// Load state manager with parsed data from script
+		dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();
+		stateManager.putAttribute(new Attribute("plainTextString", "Howdy, partner"));
+		
+		DSC sendDSC = new DSC("Send", Type.OPER);
+		DSC encryptDSC = new DSC("Encrypt", Type.OPER);
 		
 		//Set up an initial DSC matching a command.
-		DSC initialDSC = firstDSC;
+		DSC initialDSC = sendDSC;
 		
 		// Find all models which match command
 		ArrayList<IntentModel> matchingModels = (new NaiveGenerator()).generateModels(initialDSC);
 
 		// Find valid models based on user preferences
-		ArrayList<IntentModel> validModels = (new NaiveValidator()).validateModels(matchingModels, firstDSC);
+		ArrayList<IntentModel> validModels = (new NaiveValidator()).validateModels(matchingModels, encryptDSC);
 
 		// Find the best model based on cost
 		IntentModel bestModel = (new NaiveSelector()).getBestModel(validModels);
@@ -104,16 +109,23 @@ public class ExecutorManager {
 		
 		// Set up DSCs
 
-		DSC firstDSC = new DSC("First", Type.OPER);
-		DSC secondDSC = new DSC("Second", Type.OPER);
+		DSC sendDSC = new DSC("Send", Type.OPER);
+		DSC encryptDSC = new DSC("Encrypt", Type.OPER);
+		DSC loopDSC = new DSC("Loop", Type.OPER);
 
 		ArrayList<DSC> dependencies1 = new ArrayList<DSC>();	
-		dependencies1.add(secondDSC);
+		dependencies1.add(encryptDSC);
 		
 		ArrayList<DSC> dependencies2 = new ArrayList<DSC>();	
 		
-		Procedure procedure1 = new Procedure("0001", "SendBasic1", firstDSC, dependencies1);
-		Procedure procedure2 = new Procedure("0002", "Encrypt1", secondDSC, dependencies2);
+		
+		ArrayList<DSC> dependencies3 = new ArrayList<DSC>();	
+		dependencies3.add(loopDSC);
+		
+		Procedure procedure1 = new Procedure("0001", "SendBasic", sendDSC, dependencies3);
+		Procedure procedure2 = new Procedure("0002", "Looper", loopDSC, dependencies2);
+		Procedure procedure3 = new Procedure("0003", "SendSecure", sendDSC, dependencies1);
+		Procedure procedure4 = new Procedure("0004", "BasicEncrypt", encryptDSC, dependencies2);
 		
 		String p1c1 = boilerplateInclude +
 				"System.out.println(5 + 5);" +
@@ -121,7 +133,7 @@ public class ExecutorManager {
 				"Attribute att = new Attribute(\"testAttribute\", (Object)\"This string is being stored as the value of the attribute\");" +
 				"System.out.println(\"Value set in state manager\");" +
 				"stateManager.putAttribute(att);" +
-				"DSC secondDSC = new DSC(\"Second\", Type.OPER);" +
+				"DSC secondDSC = new DSC(\"Encrypt\", Type.OPER);" +
 				"return new DSCCall(secondDSC, \"finalEU\");";
 		
 		String p1c2 = boilerplateInclude +
@@ -185,8 +197,42 @@ public class ExecutorManager {
 		procedure2.addExecutionUnit(fourth);
 		procedure2.addExecutionUnit(fifth);
 		
+		
+		String secure1Code = boilerplateInclude +
+				"DSC encryptDSC = new DSC(\"Encrypt\", Type.OPER);" +
+				"return new DSCCall(encryptDSC, \"encryptReturn\");";
+		String secure2Code = boilerplateInclude +
+				"dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();" +
+				"String encryptedString = (String)stateManager.getAttribute(\"encryptedTextString\").getValue();" +
+				"dsvm.broker.I_Manager_Stub.APICall(encryptedString);" +
+				"return new EventWaitCall(\"EVENT_FILE_SENT\", \"fileSent\");";
+		String secure3Code = boilerplateInclude +
+				"System.out.println(\"File sent sucessfully\");" +
+				"return null;";
+		ExecutionUnit secure1 = new ExecutionUnit("first", secure1Code);
+		ExecutionUnit secure2 = new ExecutionUnit("encryptReturn", secure2Code);
+		ExecutionUnit secure3 = new ExecutionUnit("fileSent", secure3Code);
+		
+		procedure3.setStartEU(secure1);
+		procedure3.addExecutionUnit(secure2);
+		procedure3.addExecutionUnit(secure3);
+		
+		
+		String encrypt1 = boilerplateInclude + "import org.jasypt.util.text.*;" +
+				"BasicTextEncryptor textEncryptor = new BasicTextEncryptor();" +
+				"dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();" +
+				"textEncryptor.setPassword(\"myencryptionpassword\");" +
+				"String encryptedString = encryptedString = textEncryptor.encrypt((String)stateManager.getAttribute(\"plainTextString\").getValue());" +
+				"Attribute att = new Attribute(\"encryptedTextString\", (Object) encryptedString);" +
+				"stateManager.putAttribute(att);" +
+				"return null;";
+		
+		ExecutionUnit encrypt = new ExecutionUnit("encryptEU", encrypt1);
+		procedure4.setStartEU(encrypt);
+		
 		Repository.getInstance().addProcedure(procedure1);
-
 		Repository.getInstance().addProcedure(procedure2);
+		Repository.getInstance().addProcedure(procedure3);
+		Repository.getInstance().addProcedure(procedure4);
 	}
 }

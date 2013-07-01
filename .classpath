@@ -5,5 +5,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/mysql-connector-java-5.1.21-bin.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compiler.jar" sourcepath="lib/commons-compiler-src.zip"/>
 	<classpathentry kind="lib" path="lib/janino.jar" sourcepath="lib/janino-src.zip"/>
+	<classpathentry kind="lib" path="lib/jasypt-1.9.0.jar" sourcepath="lib/jasypt-1.9.0-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
