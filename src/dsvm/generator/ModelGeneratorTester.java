@@ -41,60 +41,22 @@ public static void main(String[] args) {
 		Procedure procedure9 = new Procedure("0009", "Compress1", compressDSC);
 		Procedure procedure0 = new Procedure("0000", "Compress2", compressDSC);
 		
-		
-		Repository.addProcedure(procedure1);
-		Repository.addProcedure(procedure2);
-		Repository.addProcedure(procedure3);
-		Repository.addProcedure(procedure4);
-		Repository.addProcedure(procedure5);
-		Repository.addProcedure(procedure6);
-		Repository.addProcedure(procedure7);
-		Repository.addProcedure(procedure8);
-		Repository.addProcedure(procedure9);
-		Repository.addProcedure(procedure0);
+		Repository repo = Repository.getInstance();
+		repo.addProcedure(procedure1);
+		repo.addProcedure(procedure2);
+		repo.addProcedure(procedure3);
+		repo.addProcedure(procedure4);
+		repo.addProcedure(procedure5);
+		repo.addProcedure(procedure6);
+		repo.addProcedure(procedure7);
+		repo.addProcedure(procedure8);
+		repo.addProcedure(procedure9);
+		repo.addProcedure(procedure0);
 		
 		for (int i = 0; i < 90; i++){
 			Procedure procedure = new Procedure(String.valueOf(i), "Compress2", new DSC("Test", Type.OPER));
-			Repository.addProcedure(procedure);
+			repo.addProcedure(procedure);
 		}
-		
-		/*
-		// First basic set of procedures along with dependencies
-		Procedure sendBasic = new Procedure("0001", "SendBasic", sendDSC, "send0001");
-		
-		ArrayList<DSC> secureDependencies = new ArrayList<DSC>();
-		secureDependencies.add(encryptDSC);	
-
-		Procedure sendSecure = new Procedure("0002", "SendSecure", sendDSC, "ss0001", secureDependencies);
-
-		Procedure DHEncrypt = new Procedure("0003", "DHEncrypt", encryptDSC, "dh0001");
-		Procedure PKIEncrypt = new Procedure("0004", "PKIEncrypt", encryptDSC, "pki0001");
-		
-		
-		// Add first set of procedures to repository
-		Repository.addProcedure(sendBasic);
-		Repository.addProcedure(sendSecure);
-		Repository.addProcedure(DHEncrypt);
-		Repository.addProcedure(PKIEncrypt);
-		
-		
-		// Second set of procedures
-		ArrayList<DSC> dummyDependencies = new ArrayList<DSC>();	
-		dummyDependencies.add(dummyDSC);
-		dummyDependencies.add(compressDSC);
-		Procedure dummyProcedure1 = new Procedure("0005", "DummyProcedure1", dummyDSC, "dummy");
-		Procedure dummyProcedure2 = new Procedure("0006", "DummyProcedure2", dummyDSC, "dummy");
-		Procedure compressProcedure = new Procedure("023", "CompressionProcedure", compressDSC, "compress001");	
-		Procedure moreSecure = new Procedure("0010", "SendMoreSecure", sendDSC, "sser0001", secureDependencies);
-		Procedure CaesarEncrypt = new Procedure("0020", "CaesarEncrypt", encryptDSC, "cae0001", dummyDependencies);
-		
-		// Add them to the repository
-		Repository.addProcedure(CaesarEncrypt);
-		Repository.addProcedure(dummyProcedure1);
-		Repository.addProcedure(dummyProcedure2);
-		Repository.addProcedure(moreSecure);
-		Repository.addProcedure(compressProcedure);
-		*/
 		
 		//Set up an initial DSC matching a command.
 		DSC initialDSC = sendDSC;

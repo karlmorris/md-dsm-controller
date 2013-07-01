@@ -27,8 +27,6 @@ public class Executor {
 	
 	IntentModel model;
 	Procedure currentProcedure;
-	ArrayList<ExecutionUnit> executionUnits = null;
-	
 	StateManager stateManager = StateManager.getInstance();
 	
 	UUID id;
@@ -127,13 +125,15 @@ public class Executor {
 		executeModel(model);	
 	}
 	
+	// Compile and execute code
 	public Call executeStatement_Bak (String statement) throws InvocationTargetException, CompileException{
 		ScriptEvaluator script = new ScriptEvaluator();
 		script.setReturnType(Call.class);
 		script.cook(statement);
-		return (Call) script.evaluate(null);
+		return executeStatement(script);
 	}
 	
+	// Execute precompiled code
 	public Call executeStatement (ScriptEvaluator script) throws InvocationTargetException, CompileException{
 		return (Call) script.evaluate(null);
 	}

@@ -15,7 +15,7 @@ public class NaiveGenerator implements Generator{
 		ArrayList<IntentModel> matchingModels = new ArrayList<IntentModel>();
 		
 		/** Get procedures for the current DSC */
-		ArrayList<Procedure> matchingProcedures = Repository.getProceduresWithDSC(initDSC);
+		ArrayList<Procedure> matchingProcedures = Repository.getInstance().getProceduresWithDSC(initDSC);
 		
 		if (matchingProcedures.isEmpty()){
 			return null;

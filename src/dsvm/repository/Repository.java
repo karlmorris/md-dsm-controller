@@ -7,13 +7,16 @@ import dsvm.dsc.DSC;
 import dsvm.procedure.Procedure;
 
 public class Repository {
-	static ArrayList<Procedure> procedures = new ArrayList<Procedure>();
 	
-	public static void addProcedure(Procedure procedure){
+	private static Repository instance;
+	
+	ArrayList<Procedure> procedures = new ArrayList<Procedure>();
+	
+	public void addProcedure(Procedure procedure){
 		procedures.add(procedure);
 	}
 	
-	static public Procedure getProcedure(String id){
+	public Procedure getProcedure(String id){
 		
 		for (int i = 0; i < procedures.size(); i++){
 			if (procedures.get(i).getId().equals(id))
@@ -22,7 +25,7 @@ public class Repository {
 		return null;
 	}
 	
-	static public ArrayList<Procedure> getProceduresWithDSC(DSC dsc){
+	public ArrayList<Procedure> getProceduresWithDSC(DSC dsc){
 		
 		ArrayList<Procedure> matchingProcedures = new ArrayList<Procedure>();
 		for (int i = 0; i < procedures.size(); i++){
@@ -30,5 +33,15 @@ public class Repository {
 				matchingProcedures.add(procedures.get(i));
 		}
 		return matchingProcedures;
+	}
+	
+	public boolean isEmpty(){
+		return procedures.isEmpty();
+	}
+	
+	public static Repository getInstance(){
+		if (instance == null)
+			instance = new Repository();
+		return instance;
 	}
 }
