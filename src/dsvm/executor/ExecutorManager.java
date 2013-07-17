@@ -24,21 +24,26 @@ public class ExecutorManager {
 	
 	public void executeScript(String controlScript) {
 		
+		ScriptParser parser = new ScriptParser(controlScript);
+		
 		// Load state manager with parsed data from script
 		dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();
+		
+		for (int i = 0; i < parser.getParameters().size(); i++ )
+			stateManager.putAttribute(parser.getParameters().get(i));
+		
 		stateManager.putAttribute(new Attribute("plainTextString", "Howdy, partner"));
 		
-		DSC sendDSC = new DSC("Send", Type.OPER);
-		DSC encryptDSC = new DSC("Encrypt", Type.OPER);
+		DSC initialDSC = parser.getCommandClassifier();
 		
-		//Set up an initial DSC matching a command.
-		DSC initialDSC = sendDSC;
+		DSC validationDSC = new DSC("Encrypt", Type.OPER);
+
 		
 		// Find all models which match command
 		ArrayList<IntentModel> matchingModels = (new NaiveGenerator()).generateModels(initialDSC);
 
 		// Find valid models based on user preferences
-		ArrayList<IntentModel> validModels = (new NaiveValidator()).validateModels(matchingModels, encryptDSC);
+		ArrayList<IntentModel> validModels = (new NaiveValidator()).validateModels(matchingModels, validationDSC);
 
 		// Find the best model based on cost
 		IntentModel bestModel = (new NaiveSelector()).getBestModel(validModels);
