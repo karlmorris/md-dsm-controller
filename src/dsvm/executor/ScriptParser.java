@@ -13,14 +13,18 @@ public class ScriptParser {
 		this.script = script;
 	}
 	
-	public DSC getCommandClassifier(){
+	public ArrayList<DSC> getCommandClassifiers(){
 		DSC sendDSC = new DSC("Send", Type.OPER);
-		return sendDSC;
+		ArrayList<DSC> al = new ArrayList<DSC>();
+		al.add(sendDSC);
+		return al;
 	}
 	
-	public ArrayList<Attribute> getParameters(){
+	public ArrayList<ArrayList<Attribute>> getParameters(){
+		ArrayList<ArrayList<Attribute>> al = new ArrayList<ArrayList<Attribute>>();
 		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 		attributes.add(new Attribute("fileName", "testFile.txt"));
-		return attributes;
+		al.add(attributes);
+		return al;
 	}
 }

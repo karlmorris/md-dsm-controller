@@ -29,61 +29,64 @@ public class ExecutorManager {
 		// Load state manager with parsed data from script
 		dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();
 		
-		for (int i = 0; i < parser.getParameters().size(); i++ )
-			stateManager.putAttribute(parser.getParameters().get(i));
+		for (int i = 0; i < parser.getParameters().size(); i++ ) {
+			for (int j = 0; j < parser.getParameters().get(i).size(); j++ )
+				stateManager.putAttribute(parser.getParameters().get(i).get(j));
 		
-		stateManager.putAttribute(new Attribute("plainTextString", "Howdy, partner"));
-		
-		DSC initialDSC = parser.getCommandClassifier();
-		
-		DSC validationDSC = new DSC("Encrypt", Type.OPER);
-
-		
-		// Find all models which match command
-		ArrayList<IntentModel> matchingModels = (new NaiveGenerator()).generateModels(initialDSC);
-
-		// Find valid models based on user preferences
-		ArrayList<IntentModel> validModels = (new NaiveValidator()).validateModels(matchingModels, validationDSC);
-
-		// Find the best model based on cost
-		IntentModel bestModel = (new NaiveSelector()).getBestModel(validModels);
-		
-		
-		System.out.println(bestModel.getAllDependencies());
-		
-		// Format and print report
-		System.out.println("We generated " + matchingModels.size() + " models");
-		System.out.println();
-		System.out.println(validModels.size() + " are valid based on user preferences");
-		System.out.println();
-		if (validModels.size() > 0)
-			System.out.println("The best model is:\n" + bestModel.prettyPrinter());
-
-		
-		System.out.println("\n\nThe full list of models:\n");
-		for (int i = 0; i < matchingModels.size(); i++){
-			System.out.println(matchingModels.get(i).prettyPrinter());
+			stateManager.putAttribute(new Attribute("plainTextString", "Howdy, partner"));
+			
+			DSC initialDSC = parser.getCommandClassifiers().get(i);
+			
+			// This is a stub for the procedure being checked for
+			DSC validationDSC = new DSC("Encrypt", Type.OPER);
+	
+			
+			// Find all models which match command
+			ArrayList<IntentModel> matchingModels = (new NaiveGenerator()).generateModels(initialDSC);
+	
+			// Find valid models based on user preferences
+			ArrayList<IntentModel> validModels = (new NaiveValidator()).validateModels(matchingModels, validationDSC);
+	
+			// Find the best model based on cost
+			IntentModel bestModel = (new NaiveSelector()).getBestModel(validModels);
+			
+			
+			System.out.println(bestModel.getAllDependencies());
+			
+			// Format and print report
+			System.out.println("We generated " + matchingModels.size() + " models");
+			System.out.println();
+			System.out.println(validModels.size() + " are valid based on user preferences");
+			System.out.println();
+			if (validModels.size() > 0)
+				System.out.println("The best model is:\n" + bestModel.prettyPrinter());
+	
+			
+			System.out.println("\n\nThe full list of models:\n");
+			for (int k = 0; k < matchingModels.size(); k++){
+				System.out.println(matchingModels.get(k).prettyPrinter());
+			}
+			
+			System.out.println("Beginnning Model Execution");
+			
+			long startTime = 0, runTime = 0;
+			
+			startTime = System.currentTimeMillis();
+			
+			try {
+				(new Executor()).executeModel(bestModel, new Negotiate("System.out.println(\"Precondition executing...\"); return true;"));
+			} catch (CompileException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			
+			runTime = System.currentTimeMillis() - startTime;
+			
+			System.out.println("Total running time: " + runTime);
 		}
-		
-		System.out.println("Beginnning Model Execution");
-		
-		long startTime = 0, runTime = 0;
-		
-		startTime = System.currentTimeMillis();
-		
-		try {
-			(new Executor()).executeModel(bestModel, new Negotiate("System.out.println(\"Precondition executing...\"); return true;"));
-		} catch (CompileException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (Exception e){
-			e.printStackTrace();
-		}
-		
-		runTime = System.currentTimeMillis() - startTime;
-		
-		System.out.println("Total running time: " + runTime);
 	}
 	
 	public void handleEvent(String event) {
