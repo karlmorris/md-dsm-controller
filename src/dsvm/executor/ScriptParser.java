@@ -8,9 +8,14 @@ import dsvm.statemanager.Attribute;
 
 public class ScriptParser {
 	String script;
+	String command;
+	
 	
 	public ScriptParser (String script){
 		this.script = script;
+		
+		 
+		
 	}
 	
 	public ArrayList<DSC> getCommandClassifiers(){

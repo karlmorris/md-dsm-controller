@@ -33,7 +33,7 @@ public class ExecutorManager {
 			for (int j = 0; j < parser.getParameters().get(i).size(); j++ )
 				stateManager.putAttribute(parser.getParameters().get(i).get(j));
 		
-			stateManager.putAttribute(new Attribute("plainTextString", "Howdy, partner"));
+			stateManager.putAttribute(new Attribute("plainTextString", "This string is to be encrypted"));
 			
 			DSC initialDSC = parser.getCommandClassifiers().get(i);
 			
