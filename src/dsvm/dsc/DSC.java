@@ -1,8 +1,14 @@
 package dsvm.dsc;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class DSC {
+public class DSC implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	String name;
 	Type type;
 	String prefix = "";

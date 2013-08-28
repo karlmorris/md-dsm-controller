@@ -22,7 +22,6 @@ public class NaiveGenerator implements Generator{
 		}
 		
 		for (int i = 0; i < matchingProcedures.size(); i++){
-			
 			/** Temporary collection of models for current level */
 			ArrayList<IntentModel> tempMatchingModels = new ArrayList<IntentModel>();
 			ArrayList<DSC> dependencies = matchingProcedures.get(i).getDependency();
@@ -41,9 +40,11 @@ public class NaiveGenerator implements Generator{
 					if (subModels != null){
 						/**If first dependency, create new set of models, otherwise merge new and current models*/
 						if (j == 0){
-							tempMatchingModels.addAll(joinModels(matchingProcedures.get(i), subModels));
+							ArrayList<IntentModel> singleModelList = new ArrayList<IntentModel>();
+							singleModelList.add(new IntentModel(matchingProcedures.get(i)));
+							tempMatchingModels = mergeModels(singleModelList, subModels);
 						} else {
-							mergeModels(tempMatchingModels, subModels);
+							tempMatchingModels = mergeModels(tempMatchingModels, subModels);
 						}
 					} else {
 						tempMatchingModels.clear();
@@ -57,29 +58,19 @@ public class NaiveGenerator implements Generator{
 	}
 	
 	/*
-	 * Create new set of models from initial procedure and sub models
-	 */
-	static ArrayList<IntentModel> joinModels(Procedure p, ArrayList<IntentModel> ml){
-		ArrayList<IntentModel> newModels = new ArrayList<IntentModel>();
-		
-		for (int i = 0; i < ml.size(); i++){
-			IntentModel m = new IntentModel(p);
-			m.addDependency(p.getId(), ml.get(i).getInit());
-			m.addAllDependencies(ml.get(i).getAllDependencies());
-			newModels.add(m);
-		}
-		return newModels;
-	}
-	
-	/*
 	 * Join models by merging on initial procedure of first set of models (cross product).
 	 */
-	static void mergeModels(ArrayList<IntentModel> models, ArrayList<IntentModel> sub){
+	static ArrayList<IntentModel> mergeModels(ArrayList<IntentModel> models, ArrayList<IntentModel> sub){
+		ArrayList<IntentModel> newModels = new ArrayList<IntentModel>();
+		
 		for (int i = 0; i < models.size(); i++){
 			for (int j = 0; j < sub.size(); j++){
-				models.get(i).addDependency(models.get(i).getInit().getId(), sub.get(j).getInit());
-				//models.get(i).addAllDependencies(sub.get(j).getAllDependencies());
+				IntentModel newModel = models.get(i).copy();
+				newModel.addDependency(newModel.getInit().getId(), sub.get(j).getInit());
+				newModel.addAllDependencies(sub.get(j).getAllDependencies());
+				newModels.add(newModel);
 			}
 		}
+		return newModels;
 	}
 }
