@@ -17,13 +17,15 @@ public class ExecutionUnit implements Serializable{
 	 */
 	private static final long serialVersionUID = 554738223676867815L;
 	
+	final String boilerplateInclude = "import dsvm.executor.call.*; import dsvm.executor.*; import dsvm.dsc.*; import dsvm.statemanager.*;import dsvm.repository.*;import dsvm.model.*;";
+	
 	String id;
 	String body = null;
 	ScriptEvaluator script = new ScriptEvaluator();
 	
 	public ExecutionUnit(String id, String body){
 		setId(id);
-		setBody(body);
+		setBody(boilerplateInclude + body);
 	}
 
 	public String getId() {

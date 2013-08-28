@@ -16,7 +16,7 @@ import dsvm.procedure.Procedure;
 import dsvm.repository.Repository;
 import dsvm.selector.NaiveSelector;
 import dsvm.selector.NaiveValidator;
-import dsvm.statemanager.Attribute;
+import dsvm.statemanager.*;
 
 public class ExecutorManager {
 	
@@ -27,7 +27,7 @@ public class ExecutorManager {
 		ScriptParser parser = new ScriptParser(controlScript);
 		
 		// Load state manager with parsed data from script
-		dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();
+		StateManager stateManager = StateManager.getInstance();
 		
 		for (int i = 0; i < parser.getParameters().size(); i++ ) {
 			for (int j = 0; j < parser.getParameters().get(i).size(); j++ )
@@ -49,10 +49,7 @@ public class ExecutorManager {
 	
 			// Find the best model based on cost
 			IntentModel bestModel = (new NaiveSelector()).getBestModel(validModels);
-			
-			
-			System.out.println(bestModel.getAllDependencies());
-			
+
 			// Format and print report
 			System.out.println("We generated " + matchingModels.size() + " models");
 			System.out.println();
@@ -113,8 +110,6 @@ public class ExecutorManager {
 
 	private static void loadProcedures(){
 		
-		String boilerplateInclude = "import dsvm.executor.call.*; import dsvm.executor.*; import dsvm.dsc.*; import dsvm.statemanager.*;import dsvm.repository.*;import dsvm.model.*;";
-		
 		// Set up DSCs
 
 		DSC sendDSC = new DSC("Send", Type.OPER);
@@ -135,18 +130,18 @@ public class ExecutorManager {
 		Procedure procedure3 = new Procedure("0003", "SendSecure", sendDSC, dependencies1);
 		Procedure procedure4 = new Procedure("0004", "BasicEncrypt", encryptDSC, dependencies2);
 		
-		String p1c1 = boilerplateInclude +
+		String p1c1 = 
 				"System.out.println(5 + 5);" +
-				"dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();" +
+				"StateManager stateManager = StateManager.getInstance();" +
 				"Attribute att = new Attribute(\"testAttribute\", (Object)\"This string is being stored as the value of the attribute\");" +
 				"System.out.println(\"Value set in state manager\");" +
 				"stateManager.putAttribute(att);" +
 				"DSC secondDSC = new DSC(\"Encrypt\", Type.OPER);" +
 				"return new DSCCall(secondDSC, \"finalEU\");";
 		
-		String p1c2 = boilerplateInclude +
+		String p1c2 = 
 				"System.out.println(30 + 30);" +
-				"dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();" +
+				"StateManager stateManager = StateManager.getInstance();" +
 				"Attribute att = new Attribute(\"testAttribute\", (Object)\"This string is being stored as the value of the attribute\");" +
 				"System.out.println(\"Checking state manager for value...\");" +
 				"if (stateManager.hasAttribute(\"testAttribute\"))" +
@@ -162,29 +157,29 @@ public class ExecutorManager {
 		procedure1.addExecutionUnit(finalEU);
 		
 		
-		String p2c1 = boilerplateInclude +
+		String p2c1 = 
 				"System.out.println(10 + 10);" +
-				"dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();" +
+				"StateManager stateManager = StateManager.getInstance();" +
 				"System.out.println((String)stateManager.getAttribute(\"testAttribute\").getValue());" +
 				"dsvm.broker.I_Manager_Stub.APICall(\"API Call Data\");" +
 				"return new EventWaitCall(\"EVENT_FILE_SENT\", \"third\");";
 		
 		// return new EUCall(\"third\");
 		
-		String p2c2 = boilerplateInclude +
+		String p2c2 = 
 				"System.out.println(20 + 10);" +
 				"return new EUCall(\"fourth\");";
 		
-		String p2c3 = boilerplateInclude +
+		String p2c3 = 
 				"System.out.println(30 + 10);" +
-				"dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();" +
+				"StateManager stateManager = StateManager.getInstance();" +
 				"System.out.println(\"Clearing state information\");" +
 				"stateManager.clearAttribute(\"testAttribute\");" +
 				"return new EUCall(\"loop\");";
 		
-		String p2c4 = boilerplateInclude +
+		String p2c4 = 
 				"System.out.println(30 + 20);" +
-				"dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();" +
+				"StateManager stateManager = StateManager.getInstance();" +
 				"int counter = 0;" +
 				"if (stateManager.hasAttribute(\"counter\")) " +
 				" counter = ((Integer)stateManager.getAttribute(\"counter\").getValue()) + 1;" +
@@ -206,15 +201,15 @@ public class ExecutorManager {
 		procedure2.addExecutionUnit(fifth);
 		
 		
-		String secure1Code = boilerplateInclude +
+		String secure1Code = 
 				"DSC encryptDSC = new DSC(\"Encrypt\", Type.OPER);" +
 				"return new DSCCall(encryptDSC, \"encryptReturn\");";
-		String secure2Code = boilerplateInclude +
-				"dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();" +
+		String secure2Code = 
+				"StateManager stateManager = StateManager.getInstance();" +
 				"String encryptedString = (String)stateManager.getAttribute(\"encryptedTextString\").getValue();" +
 				"dsvm.broker.I_Manager_Stub.APICall(encryptedString);" +
 				"return new EventWaitCall(\"EVENT_FILE_SENT\", \"fileSent\");";
-		String secure3Code = boilerplateInclude +
+		String secure3Code = 
 				"System.out.println(\"File sent sucessfully\");" +
 				"return null;";
 		ExecutionUnit secure1 = new ExecutionUnit("first", secure1Code);
@@ -226,9 +221,10 @@ public class ExecutorManager {
 		procedure3.addExecutionUnit(secure3);
 		
 		
-		String encrypt1 = boilerplateInclude + "import org.jasypt.util.text.*;" +
+		String encrypt1 = 
+				"import org.jasypt.util.text.*;" +
 				"BasicTextEncryptor textEncryptor = new BasicTextEncryptor();" +
-				"dsvm.statemanager.StateManager stateManager = dsvm.statemanager.StateManager.getInstance();" +
+				"StateManager stateManager = StateManager.getInstance();" +
 				"textEncryptor.setPassword(\"myencryptionpassword\");" +
 				"String encryptedString = encryptedString = textEncryptor.encrypt((String)stateManager.getAttribute(\"plainTextString\").getValue());" +
 				"Attribute att = new Attribute(\"encryptedTextString\", (Object) encryptedString);" +
