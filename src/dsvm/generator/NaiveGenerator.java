@@ -3,12 +3,16 @@ package dsvm.generator;
 
 import java.util.ArrayList;
 
+import com.rits.cloning.*;
+
 import dsvm.dsc.DSC;
 import dsvm.model.IntentModel;
 import dsvm.procedure.Procedure;
 import dsvm.repository.Repository;
 
 public class NaiveGenerator implements Generator{
+	
+	static Cloner cloner = new Cloner();
 	
 	public ArrayList<IntentModel> generateModels(DSC initDSC) {
 		/** Collection to store final set of models */
@@ -65,7 +69,7 @@ public class NaiveGenerator implements Generator{
 		
 		for (int i = 0; i < models.size(); i++){
 			for (int j = 0; j < sub.size(); j++){
-				IntentModel newModel = models.get(i).copy();
+				IntentModel newModel = cloner.deepClone(models.get(i));
 				newModel.addDependency(newModel.getInit().getId(), sub.get(j).getInit());
 				newModel.addAllDependencies(sub.get(j).getAllDependencies());
 				newModels.add(newModel);

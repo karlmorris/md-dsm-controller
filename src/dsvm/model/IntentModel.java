@@ -1,11 +1,5 @@
 package dsvm.model;
 
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,13 +32,6 @@ public class IntentModel implements Serializable{
 		this.init = init;
 	}
 	
-	public IntentModel (IntentModel copy){
-		this();
-		name = copy.name;
-		init = new Procedure(copy.init);
-		procedures.putAll(copy.getAllDependencies());
-	}
-	
 	public String getId(){
 		return id.toString();
 	}
@@ -54,32 +41,6 @@ public class IntentModel implements Serializable{
 	
 	public Procedure getInit(){
 		return this.init;
-	}
-	
-	public IntentModel copy(){
-		Object obj = null;
-		
-		try {
-            // Write the object out to a byte array
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(bos);
-            out.writeObject(this);
-            out.flush();
-            out.close();
-
-            // Make an input stream from the byte array and read
-            // a copy of the object back in.
-            ObjectInputStream in = new ObjectInputStream(
-                new ByteArrayInputStream(bos.toByteArray()));
-            obj = in.readObject();
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-        catch(ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
-        }
-        return (IntentModel) obj;
 	}
 	
 	public ArrayList<Procedure> getDependencies(String node){

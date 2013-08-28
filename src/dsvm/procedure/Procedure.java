@@ -37,14 +37,6 @@ public class Procedure implements Serializable{
 		this.dependency = dependency;
 	}
 	
-	public Procedure (Procedure copy){
-		super();
-		this.id = copy.id;
-		this.name = copy.name;
-		this.classifier = copy.classifier;
-		this.dependency = new ArrayList<DSC>(copy.dependency);
-	}
-	
 	public String getId() {
 		return id;
 	}
