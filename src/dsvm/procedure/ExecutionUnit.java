@@ -1,6 +1,9 @@
 package dsvm.procedure;
 
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import org.codehaus.commons.compiler.CompileException;
@@ -51,5 +54,17 @@ public class ExecutionUnit implements Serializable{
 		} catch (CompileException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void readObject(ObjectInputStream in) throws IOException,
+	ClassNotFoundException {
+		script = new ScriptEvaluator();
+		id = in.readUTF();
+		setBody(in.readUTF());
+	}
+	
+	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.writeUTF(id);
+		out.writeUTF(body);		
 	}
 }
