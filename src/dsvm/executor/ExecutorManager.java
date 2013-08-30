@@ -39,10 +39,9 @@ public class ExecutorManager {
 			
 			// This is a stub for the procedure being checked for
 			DSC validationDSC = new DSC("Encrypt", Type.OPER);
-	
-			
+
 			// Find all models which match command
-			ArrayList<IntentModel> matchingModels = (new NaiveGenerator()).generateModels(initialDSC);
+			ArrayList<IntentModel> matchingModels = (new NaiveGenerator()).generateModels(initialDSC, Repository.getInstance().getAllProcedures());
 	
 			// Find valid models based on user preferences
 			ArrayList<IntentModel> validModels = (new NaiveValidator()).validateModels(matchingModels, validationDSC);

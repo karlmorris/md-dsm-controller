@@ -26,7 +26,7 @@ public static void main(String[] args) {
 		ArrayList<DSC> dependencies1 = new ArrayList<DSC>();	
 		dependencies1.add(encryptDSC);
 		dependencies1.add(additionalDSC);
-		dependencies1.add(compressDSC);
+		//dependencies1.add(compressDSC);
 		
 		
 		ArrayList<DSC> dependencies2 = new ArrayList<DSC>();	
@@ -88,7 +88,7 @@ public static void main(String[] args) {
 			startTime = System.currentTimeMillis();
 
 			// Find all models which match command
-			matchingModels = (new NaiveGenerator()).generateModels(initialDSC);
+			matchingModels = (new NaiveGenerator()).generateModels(initialDSC, Repository.getInstance().getAllProcedures());
 
 			// Find valid models based on user preferences
 			validModels = (new NaiveValidator()).validateModels(matchingModels, dummyDSC);

@@ -8,18 +8,19 @@ import com.rits.cloning.*;
 import dsvm.dsc.DSC;
 import dsvm.model.IntentModel;
 import dsvm.procedure.Procedure;
-import dsvm.repository.Repository;
 
 public class NaiveGenerator implements Generator{
 	
 	static Cloner cloner = new Cloner();
 	
-	public ArrayList<IntentModel> generateModels(DSC initDSC) {
+	public ArrayList<IntentModel> generateModels(DSC initDSC, ArrayList<Procedure> procedures) {
+		Repository repo = new Repository(procedures);
+		
 		/** Collection to store final set of models */
 		ArrayList<IntentModel> matchingModels = new ArrayList<IntentModel>();
 		
 		/** Get procedures for the current DSC */
-		ArrayList<Procedure> matchingProcedures = Repository.getInstance().getProceduresWithDSC(initDSC);
+		ArrayList<Procedure> matchingProcedures = repo.getProceduresWithDSC(initDSC);
 		
 		if (matchingProcedures.isEmpty()){
 			return null;
@@ -38,7 +39,7 @@ public class NaiveGenerator implements Generator{
 				/** If further dependencies, make recursive call, then join */
 				ArrayList<IntentModel> subModels = null;
 				for (int j = 0; j < dependencies.size(); j++){
-					subModels = generateModels(dependencies.get(j));
+					subModels = generateModels(dependencies.get(j), repo.getAllProcedures());
 					
 					/** If a procedure is not available to meet a stated dependency, that model is removed. */
 					if (subModels != null){
@@ -76,5 +77,33 @@ public class NaiveGenerator implements Generator{
 			}
 		}
 		return newModels;
+	}
+	
+	public class Repository extends dsvm.repository.Repository {
+		
+		ArrayList<Procedure> procedures = new ArrayList<Procedure>();
+		
+		public Repository(ArrayList<Procedure> procedures){
+			this.procedures = procedures;
+		}
+		
+		@Override
+		public ArrayList<Procedure> getProceduresWithDSC(DSC dsc){
+			
+			ArrayList<Procedure> matchingProcedures = new ArrayList<Procedure>();
+			for (int i = 0; i < procedures.size(); i++){
+				if (procedures.get(i).getClassifier().equals(dsc))
+					matchingProcedures.add(procedures.remove(i--));
+			}
+			return matchingProcedures;
+		}
+		
+		public void addProcedures(ArrayList<Procedure> procedures){
+			this.procedures = procedures;
+		}
+		
+		public ArrayList<Procedure> getAllProcedures(){
+			return procedures;
+		}
 	}
 }
