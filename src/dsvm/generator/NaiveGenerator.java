@@ -13,20 +13,22 @@ public class NaiveGenerator implements Generator{
 	
 	static Cloner cloner = new Cloner();
 	
-	public ArrayList<IntentModel> generateModels(DSC initDSC, ArrayList<Procedure> procedures) {
-		Repository repo = new Repository(procedures);
+	public ArrayList<IntentModel> generateModels(DSC initDSC) {
 		
 		/** Collection to store final set of models */
 		ArrayList<IntentModel> matchingModels = new ArrayList<IntentModel>();
 		
 		/** Get procedures for the current DSC */
-		ArrayList<Procedure> matchingProcedures = repo.getProceduresWithDSC(initDSC);
+		ArrayList<Procedure> matchingProcedures = Repository.getInstance().getProceduresWithDSC(initDSC);
+		System.out.println(initDSC.getName() + ": " + matchingProcedures.size());
 		
 		if (matchingProcedures.isEmpty()){
 			return null;
 		}
 		
 		for (int i = 0; i < matchingProcedures.size(); i++){
+			
+			
 			/** Temporary collection of models for current level */
 			ArrayList<IntentModel> tempMatchingModels = new ArrayList<IntentModel>();
 			ArrayList<DSC> dependencies = matchingProcedures.get(i).getDependency();
@@ -39,7 +41,8 @@ public class NaiveGenerator implements Generator{
 				/** If further dependencies, make recursive call, then join */
 				ArrayList<IntentModel> subModels = null;
 				for (int j = 0; j < dependencies.size(); j++){
-					subModels = generateModels(dependencies.get(j), repo.getAllProcedures());
+					System.out.println(matchingProcedures.get(i).getName() + " is calling: " + dependencies.get(j).getName());
+					subModels = generateModels(dependencies.get(j));
 					
 					/** If a procedure is not available to meet a stated dependency, that model is removed. */
 					if (subModels != null){
@@ -56,6 +59,7 @@ public class NaiveGenerator implements Generator{
 					}
 				}
 			}
+
 			/**Add lower layer models to final collection*/
 			matchingModels.addAll(tempMatchingModels);
 		}

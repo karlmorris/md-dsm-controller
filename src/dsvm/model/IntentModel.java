@@ -76,7 +76,6 @@ public class IntentModel implements Serializable{
 		}
 		
 		return null;
-		
 	}
 	
 	public Map<String, ArrayList<Procedure>> getAllDependencies(){

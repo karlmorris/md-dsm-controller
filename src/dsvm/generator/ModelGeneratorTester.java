@@ -25,8 +25,8 @@ public static void main(String[] args) {
 		
 		ArrayList<DSC> dependencies1 = new ArrayList<DSC>();	
 		dependencies1.add(encryptDSC);
-		dependencies1.add(additionalDSC);
-		//dependencies1.add(compressDSC);
+		//dependencies1.add(additionalDSC);
+		dependencies1.add(compressDSC);
 		
 		
 		ArrayList<DSC> dependencies2 = new ArrayList<DSC>();	
@@ -41,33 +41,33 @@ public static void main(String[] args) {
 		Procedure procedure1 = new Procedure("0001", "SendBasic1", sendDSC, dependencies1);
 		Procedure procedure2 = new Procedure("0002", "SendBasic2", sendDSC, dependencies1);
 		Procedure procedure3 = new Procedure("0003", "SendBasic3", sendDSC, dependencies1);
-		Procedure procedure4 = new Procedure("0004", "Encrypt1", encryptDSC, dependencies2);
-		Procedure procedure5 = new Procedure("0005", "Encrypt2", encryptDSC, dependencies2);
-		Procedure procedure6 = new Procedure("0006", "Encrypt3", encryptDSC, dependencies2);
-		Procedure procedure7 = new Procedure("0007", "Dummy1", dummyDSC);
-		Procedure procedure8 = new Procedure("0008", "Dummy2", dummyDSC, dependencies3);
+		Procedure procedure4 = new Procedure("0004", "Encrypt1", encryptDSC, dependencies3);
+		//Procedure procedure5 = new Procedure("0005", "Encrypt2", encryptDSC, dependencies2);
+		//Procedure procedure6 = new Procedure("0006", "Encrypt3", encryptDSC, dependencies2);
+		//Procedure procedure7 = new Procedure("0007", "Dummy1", dummyDSC);
+		//Procedure procedure8 = new Procedure("0008", "Dummy2", dummyDSC, dependencies3);
 		Procedure procedure9 = new Procedure("0009", "Compress1", compressDSC);
-		Procedure procedure0 = new Procedure("0000", "Compress2", compressDSC);
-		Procedure procedure11 = new Procedure("0011", "Additional1", additionalDSC);
-		Procedure procedure12 = new Procedure("0012", "Additional2", additionalDSC, dependencies4);
-		Procedure procedure13 = new Procedure("0013", "Additional3", additionalDSC, dependencies4);
-		Procedure procedure14 = new Procedure("0014", "Required1", requiredDSC);
+		//Procedure procedure0 = new Procedure("0010", "Compress2", compressDSC);
+		//Procedure procedure11 = new Procedure("0011", "Additional1", additionalDSC);
+		//Procedure procedure12 = new Procedure("0012", "Additional2", additionalDSC, dependencies4);
+		//Procedure procedure13 = new Procedure("0013", "Additional3", additionalDSC, dependencies4);
+		//Procedure procedure14 = new Procedure("0014", "Required1", requiredDSC);
 		
 		Repository repo = Repository.getInstance();
 		repo.addProcedure(procedure1);
 		repo.addProcedure(procedure2);
 		repo.addProcedure(procedure3);
 		repo.addProcedure(procedure4);
-		repo.addProcedure(procedure5);
-		repo.addProcedure(procedure6);
-		repo.addProcedure(procedure7);
-		repo.addProcedure(procedure8);
+		//repo.addProcedure(procedure5);
+		//repo.addProcedure(procedure6);
+		//repo.addProcedure(procedure7);
+		//repo.addProcedure(procedure8);
 		repo.addProcedure(procedure9);
-		repo.addProcedure(procedure0);
-		repo.addProcedure(procedure11);
-		repo.addProcedure(procedure12);
-		repo.addProcedure(procedure13);
-		repo.addProcedure(procedure14);
+		//repo.addProcedure(procedure0);
+		//repo.addProcedure(procedure11);
+		//repo.addProcedure(procedure12);
+		//repo.addProcedure(procedure13);
+		//repo.addProcedure(procedure14);
 		
 		for (int i = 0; i < 90; i++){
 			Procedure procedure = new Procedure(String.valueOf(i), "Compress2", new DSC("Test", Type.OPER));
@@ -88,10 +88,10 @@ public static void main(String[] args) {
 			startTime = System.currentTimeMillis();
 
 			// Find all models which match command
-			matchingModels = (new NaiveGenerator()).generateModels(initialDSC, Repository.getInstance().getAllProcedures());
+			matchingModels = (new NaiveGenerator()).generateModels(initialDSC);
 
 			// Find valid models based on user preferences
-			validModels = (new NaiveValidator()).validateModels(matchingModels, dummyDSC);
+			validModels = (new NaiveValidator()).validateModels(matchingModels, encryptDSC);
 
 			// Find the best model based on cost
 			bestModel = (new NaiveSelector()).getBestModel(validModels);
