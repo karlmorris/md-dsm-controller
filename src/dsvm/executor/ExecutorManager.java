@@ -15,8 +15,8 @@ import dsvm.procedure.ExecutionUnit;
 import dsvm.procedure.Procedure;
 import dsvm.repository.Repository;
 import dsvm.selector.NaiveSelector;
-import dsvm.selector.NaiveValidator;
 import dsvm.statemanager.*;
+import dsvm.validator.NaiveValidator;
 
 public class ExecutorManager {
 	

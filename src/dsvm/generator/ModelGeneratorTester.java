@@ -9,7 +9,7 @@ import dsvm.model.IntentModel;
 import dsvm.procedure.Procedure;
 import dsvm.repository.Repository;
 import dsvm.selector.NaiveSelector;
-import dsvm.selector.NaiveValidator;
+import dsvm.validator.NaiveValidator;
 
 public class ModelGeneratorTester {
 public static void main(String[] args) {
