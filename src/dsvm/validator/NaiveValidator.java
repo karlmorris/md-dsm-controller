@@ -11,7 +11,9 @@ import dsvm.procedure.Procedure;
 
 public class NaiveValidator implements Validator{
 
-	public ArrayList<IntentModel> validateModels(ArrayList<IntentModel> models, DSC dsc){
+	public ArrayList<IntentModel> validateModels(ArrayList<IntentModel> models, Object... params){
+		
+		DSC dsc = (DSC) params[0];
 		ArrayList<IntentModel> validModels = new ArrayList<IntentModel>();
 		
 		
