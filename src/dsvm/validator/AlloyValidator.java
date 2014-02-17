@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import dsvm.dsc.DSC;
 import dsvm.model.IntentModel;
 
-
 public class AlloyValidator implements Validator {
 
 	@Override
